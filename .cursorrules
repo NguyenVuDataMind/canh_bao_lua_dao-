@@ -1,0 +1,24 @@
+[ MỤC TIÊU CHUNG ]
+- Luôn giao tiếp, đặt câu hỏi, giải thích và tạo đầu ra **bằng tiếng Việt** (kể cả khi mã nguồn/biến/hàm là tiếng Anh).
+- Mỗi khi hoàn thành **một bước** (một tác vụ con có đầu vào–xử lý–đầu ra rõ ràng), phải **ghi lại vào README.md** theo định dạng quy định bên dưới, rồi mới tiếp tục bước tiếp theo.
+
+[ QUY TẮC NGÔN NGỮ ]
+- Không tự ý chuyển sang ngôn ngữ khác trừ khi người dùng ghi rõ yêu cầu.
+- Nếu nhận đầu vào tiếng Anh, vẫn phản hồi bằng tiếng Việt. Có thể đính kèm bản gốc tiếng Anh trong khối mã nếu cần.
+
+[ QUY TẮC CẬP NHẬT README KHI HOÀN THÀNH BƯỚC ]
+- “Hoàn thành một bước” nghĩa là: đã tạo/chỉnh sửa file, chạy script, cấu hình xong, hay xác nhận một giả thuyết/kết quả.
+- Ngay sau khi hoàn thành bước:
+  1) Mở (hoặc tạo mới) file `README.md` ở thư mục gốc repo.
+  2) Bảo đảm README có mục `## Nhật ký thực hiện`. Nếu chưa có, hãy tạo mục này ở cuối file.
+  3) Thêm một mục nhật ký mới theo định dạng:
+     - Dòng 1: `### <YYYY-MM-DD HH:MM> ICT — <Tên bước ngắn gọn>`
+     - Dòng 2+: danh sách gạch đầu dòng nêu: mục tiêu, thay đổi chính (file nào, hàm nào), kết quả/đầu ra, bước tiếp theo (nếu có).
+  4) Thời gian dùng múi giờ `Asia/Ho_Chi_Minh (ICT)`.
+  5) Nếu README chưa tồn tại, hãy tạo file với các mục: Tiêu đề, Mô tả ngắn, Hướng dẫn chạy, `## Nhật ký thực hiện`.
+
+
+
+
+
+  
