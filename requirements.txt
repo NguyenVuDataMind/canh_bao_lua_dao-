@@ -7,9 +7,7 @@ asyncpg==0.30.0
 bcrypt==4.3.0
 cffi==2.0.0
 click==8.3.0
-colorama==0.4.6
 cryptography==46.0.2
-dnspython==2.8.0
 email_validator==2.2.0
 fastapi==0.119.0
 fastapi-users==14.0.1
@@ -17,7 +15,6 @@ fastapi-users-db-sqlalchemy==7.0.0
 greenlet==3.2.4
 h11==0.16.0
 idna==3.11
-makefun==1.16.0
 Mako==1.3.10
 MarkupSafe==3.0.3
 psycopg2==2.9.11
@@ -32,6 +29,18 @@ python-multipart==0.0.20
 sniffio==1.3.1
 SQLAlchemy==2.0.44
 starlette==0.48.0
-typing-inspection==0.4.2
 typing_extensions==4.15.0
 uvicorn==0.37.0
+# PaddleOCR dependencies - Fixed version conflicts
+# numpy < 2.0 required by PaddleOCR/PaddlePaddle (issue #14708, #65396)
+numpy<2.0.0,>=1.21.0
+# opencv-python compatible range for PaddleOCR
+opencv-python>=4.5.0,<4.7.0
+pillow>=10.2.0
+paddlepaddle==2.6.2
+paddleocr==2.7.0
+requests==2.31.0
+pyclipper>=1.2.0
+shapely>=2.0.0
+scipy>=1.9.0
+lmdb>=1.4.0

@@ -90,7 +90,7 @@ async def update_reported_phone(
     if not reported_phone:
         raise HTTPException(404)
     update_data = reported_phone_in.model_dump(exclude_unset=True)
-    for field, value in update_data.reported_phones():
+    for field, value in update_data.items():
         setattr(reported_phone, field, value)
     session.add(reported_phone)
     await session.commit()

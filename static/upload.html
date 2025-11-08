@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trích xuất Text từ Ảnh - Canh Báo Lừa Đảo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: #f8f9ff;
+        }
+        
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #764ba2;
+        }
+        
+        .upload-area.dragover {
+            background: #e8f0fe;
+            border-color: #4285f4;
+            transform: scale(1.02);
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #667eea;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .preview-area {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .preview-area.show {
+            display: block;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result-area.show {
+            display: block;
+        }
+        
+        .result-section {
+            margin-bottom: 20px;
+        }
+        
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .result-text {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 5px 5px 5px 0;
+            word-break: break-all;
+        }
+        
+        .badge.url {
+            background: #f44336;
+        }
+        
+        .badge.phone {
+            background: #4caf50;
+        }
+        
+        .badge.email {
+            background: #ff9800;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #c33;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box p {
+            color: #1976d2;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Trích xuất Text từ Ảnh</h1>
+        <p class="subtitle">Upload ảnh cuộc trò chuyện để trích xuất text (Giữ nguyên dấu tiếng Việt)</p>
+        
+        <div class="info-box">
+            <p><strong>📌 Lưu ý:</strong></p>
+            <p>• Hệ thống sẽ giữ nguyên dấu tiếng Việt trong text</p>
+            <p>• Hỗ trợ ảnh từ Zalo, SMS, Web screenshots</p>
+            <p>• Tự động phát hiện URL, số điện thoại, email</p>
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📸</div>
+            <p class="upload-text">Kéo thả ảnh vào đây hoặc click để chọn</p>
+            <p style="color: #999; font-size: 12px; margin-top: 5px;">Hỗ trợ: JPG, PNG, GIF</p>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="btn" id="uploadBtn" disabled>🚀 Trích xuất Text</button>
+        </div>
+        
+        <div class="preview-area" id="previewArea">
+            <img id="previewImage" class="preview-image" alt="Preview">
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #667eea;">Đang xử lý ảnh...</p>
+            <p style="font-size: 12px; color: #999; margin-top: 5px;">Bước 1: Tiền xử lý ảnh → Bước 2: OCR → Bước 3: Làm sạch text</p>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="result-area" id="resultArea">
+            <div class="result-section">
+                <h3>📝 Text đã trích xuất (gốc từ OCR):</h3>
+                <div class="result-text" id="extractedText"></div>
+            </div>
+            
+            <div class="result-section">
+                <h3>✨ Text đã làm sạch (giữ dấu tiếng Việt):</h3>
+                <div class="result-text" id="cleanedText"></div>
+            </div>
+            
+            <div class="result-section">
+                <h3>🔗 URLs phát hiện:</h3>
+                <div id="urls"></div>
+            </div>
+            
+            <div class="result-section">
+                <h3>📞 Số điện thoại phát hiện:</h3>
+                <div id="phones"></div>
+            </div>
+            
+            <div class="result-section">
+                <h3>📧 Email phát hiện:</h3>
+                <div id="emails"></div>
+            </div>
+            
+            <div class="result-section">
+                <h3>📊 Thống kê:</h3>
+                <div class="stats-grid" id="stats"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const previewArea = document.getElementById('previewArea');
+        const previewImage = document.getElementById('previewImage');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const resultArea = document.getElementById('resultArea');
+        
+        let selectedFile = null;
+        
+        // Click để chọn file
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        // Chọn file
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showError('Vui lòng chọn file ảnh!');
+                return;
+            }
+            
+            selectedFile = file;
+            uploadBtn.disabled = false;
+            
+            // Hiển thị preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewArea.classList.add('show');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Upload và xử lý
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            // Ẩn kết quả cũ, hiện loading
+            resultArea.classList.remove('show');
+            error.classList.remove('show');
+            loading.classList.add('show');
+            uploadBtn.disabled = true;
+            
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            
+            try {
+                // Lấy token từ localStorage hoặc prompt
+                let token = localStorage.getItem('auth_token');
+                if (!token) {
+                    token = prompt('Nhập JWT token (lấy từ /api/v1/auth/jwt/login):');
+                    if (token) {
+                        localStorage.setItem('auth_token', token);
+                    }
+                }
+                
+                if (!token) {
+                    throw new Error('Cần JWT token để sử dụng API');
+                }
+                
+                const response = await fetch('/api/v1/image-processing/extract-text', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Có lỗi xảy ra');
+                }
+                
+                const data = await response.json();
+                
+                // Hiển thị kết quả
+                document.getElementById('extractedText').textContent = data.extracted_text || 'Không có text';
+                document.getElementById('cleanedText').textContent = data.cleaned_text || 'Không có text';
+                
+                // URLs
+                const urlsDiv = document.getElementById('urls');
+                if (data.detected_urls && data.detected_urls.length > 0) {
+                    urlsDiv.innerHTML = data.detected_urls.map(url => 
+                        `<span class="badge url">${url}</span>`
+                    ).join('');
+                } else {
+                    urlsDiv.innerHTML = '<span style="color: #999;">Không tìm thấy URL</span>';
+                }
+                
+                // Phones
+                const phonesDiv = document.getElementById('phones');
+                if (data.detected_phones && data.detected_phones.length > 0) {
+                    phonesDiv.innerHTML = data.detected_phones.map(phone => 
+                        `<span class="badge phone">${phone}</span>`
+                    ).join('');
+                } else {
+                    phonesDiv.innerHTML = '<span style="color: #999;">Không tìm thấy số điện thoại</span>';
+                }
+                
+                // Emails
+                const emailsDiv = document.getElementById('emails');
+                if (data.detected_emails && data.detected_emails.length > 0) {
+                    emailsDiv.innerHTML = data.detected_emails.map(email => 
+                        `<span class="badge email">${email}</span>`
+                    ).join('');
+                } else {
+                    emailsDiv.innerHTML = '<span style="color: #999;">Không tìm thấy email</span>';
+                }
+                
+                // Stats
+                const stats = data.cleaning_stats || {};
+                const statsDiv = document.getElementById('stats');
+                statsDiv.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.original_length || 0}</div>
+                        <div class="stat-label">Ký tự gốc</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.cleaned_length || 0}</div>
+                        <div class="stat-label">Ký tự sau làm sạch</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.removed_chars || 0}</div>
+                        <div class="stat-label">Đã loại bỏ</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.urls_found || 0}</div>
+                        <div class="stat-label">URLs</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.phones_found || 0}</div>
+                        <div class="stat-label">Số điện thoại</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.emails_found || 0}</div>
+                        <div class="stat-label">Email</div>
+                    </div>
+                `;
+                
+                resultArea.classList.add('show');
+                loading.classList.remove('show');
+                uploadBtn.disabled = false;
+                
+            } catch (err) {
+                showError(err.message);
+                loading.classList.remove('show');
+                uploadBtn.disabled = false;
+            }
+        });
+        
+        function showError(message) {
+            error.textContent = '❌ Lỗi: ' + message;
+            error.classList.add('show');
+        }
+    </script>
+</body>
+</html>
+
