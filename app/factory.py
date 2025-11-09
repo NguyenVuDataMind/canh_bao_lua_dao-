@@ -24,6 +24,32 @@ def create_app():
     setup_routers(app, fastapi_users)
     setup_cors_middleware(app)
     serve_static_app(app)
+    
+    # Custom OpenAPI schema với security scheme cho Bearer token
+    def custom_openapi():
+        if app.openapi_schema:
+            return app.openapi_schema
+        from fastapi.openapi.utils import get_openapi
+        openapi_schema = get_openapi(
+            title=settings.PROJECT_NAME,
+            version="0.1.0",
+            description=description,
+            routes=app.routes,
+        )
+        # Thêm security scheme cho Bearer token
+        openapi_schema["components"]["securitySchemes"] = {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Enter JWT token. Format: Bearer <token>"
+            }
+        }
+        app.openapi_schema = openapi_schema
+        return app.openapi_schema
+    
+    app.openapi = custom_openapi
+    
     return app
 
 

@@ -15,7 +15,7 @@ from app.core.config import settings
 from app.deps.db import CurrentAsyncSession
 from app.models.user import User as UserModel
 
-bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
+bearer_transport = BearerTransport(tokenUrl=f"{settings.API_PATH}/auth/jwt/login")
 
 
 def get_jwt_strategy() -> JWTStrategy:

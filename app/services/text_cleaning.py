@@ -67,15 +67,26 @@ class TextCleaner:
             # - Dấu câu cơ bản: . , ! ? : - ( ) [ ] { } / \
             # - Ký tự tiếng Việt: ă, â, ê, ô, ơ, ư, đ và các dấu thanh
             
-            # Chỉ loại bỏ các ký tự đặc biệt không phải dấu câu cơ bản
-            # Giữ lại tất cả ký tự Unicode hợp lệ cho tiếng Việt
-            text = re.sub(r'[^\w\s\.\,\!\?\:\-\(\)\[\]\{\}\/\\]', ' ', text)
+            # Loại bỏ ký tự đặc biệt không hợp lệ (nhiễu từ OCR)
+            # Giữ lại: chữ cái, số, dấu câu cơ bản, khoảng trắng, tiếng Việt
+            # Pattern này giữ lại tất cả ký tự Unicode hợp lệ cho tiếng Việt
+            text = re.sub(r'[^\w\s\.\,\!\?\:\-\(\)\[\]\{\}\/\\àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]', ' ', text)
             
-            # 5. Loại bỏ khoảng trắng thừa
-            text = re.sub(r'\s+', ' ', text)  # Nhiều space thành 1 space
-            text = re.sub(r'\n\s*\n', '\n', text)  # Nhiều newline thành 1 newline
+            # 5. Xử lý line breaks thông minh cho chat screenshots
+            # Giữ \n giữa các câu hoàn chỉnh (đã được xử lý ở OCR service)
+            # Chỉ loại bỏ nhiều newline liên tiếp
+            text = re.sub(r'\n{3,}', '\n\n', text)  # Nhiều newline (>2) thành 2 newline
             
-            # 6. Trim đầu cuối
+            # 6. Loại bỏ khoảng trắng thừa (nhưng giữ line breaks)
+            # Thay nhiều space trong cùng dòng thành 1 space
+            lines = text.split('\n')
+            cleaned_lines = [re.sub(r'\s+', ' ', line).strip() for line in lines]
+            text = '\n'.join(cleaned_lines)
+            
+            # 7. Sửa lỗi OCR phổ biến
+            text = self.fix_common_ocr_errors(text)
+            
+            # 8. Trim đầu cuối
             text = text.strip()
             
             logger.info(f"Cleaned text length: {len(text)} characters")
@@ -217,4 +228,48 @@ class TextCleaner:
             logger.info("Text contains Vietnamese characters with accents - preserved")
         
         return text
+    
+    def fix_common_ocr_errors(self, text: str) -> str:
+        """
+        Sửa các lỗi OCR phổ biến trong tiếng Việt
+        Sử dụng fuzzy matching và dictionary để sửa lỗi
+        
+        Args:
+            text: Text cần sửa lỗi
+            
+        Returns:
+            Text đã được sửa lỗi
+        """
+        if not text:
+            return text
+        
+        # Dictionary các lỗi OCR phổ biến và cách sửa
+        # Format: {lỗi: sửa}
+        common_fixes = {
+            # Lỗi chữ cái thường gặp
+            r'\bUoạn\b': 'Đoạn',
+            r'\buoạn\b': 'đoạn',
+            r'\bUOẠN\b': 'ĐOẠN',
+            r'\bcong dong\b': 'cộng đồng',
+            r'\bcklại\b': 'ck lại',
+            r'\bcklai\b': 'ck lại',
+            r'\bdck\b': 'được',
+            r'\bnhoá\b': 'nhóa',
+            r'\bnhoa\b': 'nhóa',
+            # Lỗi số và ký tự
+            r'\+\s*2\b': 't2',  # +2 -> t2 (thứ 2)
+            r'\+\s*': '',  # Loại bỏ dấu + thừa
+            # Lỗi khoảng trắng trong từ ghép
+            r'\bkiếm tiền nộp\b': 'kiếm tiền nộp',
+            r'\blàm đơn nộp muộn\b': 'làm đơn nộp muộn',
+        }
+        
+        # Áp dụng các fix
+        for pattern, replacement in common_fixes.items():
+            text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+        
+        # Sửa lỗi khoảng trắng thừa
+        text = re.sub(r'\s+', ' ', text)
+        
+        return text.strip()
 

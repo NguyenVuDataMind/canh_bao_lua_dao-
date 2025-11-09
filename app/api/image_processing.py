@@ -1,7 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status
 from app.deps.users import CurrentUser
-from app.services.image_preprocessing import ImagePreprocessor
-from app.services.ocr_service import VietnameseOCRService
+from app.services.vintern_ocr_service import VinternOCRService
 from app.services.text_cleaning import TextCleaner
 from app.schemas.scam_detection import TextExtractionResponse
 import logging
@@ -11,22 +10,27 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/image-processing")
 
 # Initialize services
-preprocessor = ImagePreprocessor()
-ocr_service = VietnameseOCRService()
+ocr_service = VinternOCRService(use_gpu=False)
 text_cleaner = TextCleaner()
 
 @router.post("/extract-text", response_model=TextExtractionResponse)
 async def extract_text_from_image(
-    user: CurrentUser,
+    # TODO: Thêm lại authentication sau khi hoàn thành dịch vụ
+    # user: CurrentUser,  # ← Uncomment dòng này để bật lại authentication
     image: UploadFile = File(...)
 ):
     """
-    Trích xuất text từ ảnh qua 3 bước:
-    1. Tiền xử lý ảnh (làm nét, resize)
-    2. OCR tiếng Việt (PaddleOCR)
-    3. Làm sạch text (giữ dấu tiếng Việt)
+    Trích xuất text từ ảnh sử dụng Vintern-1B-v3.5 từ Hugging Face:
+    1. OCR tiếng Việt (Vintern-1B-v3.5) - trích xuất toàn bộ text trong ảnh
+       - Sử dụng Vintern model được fine-tune đặc biệt cho tiếng Việt
+       - Model tự động xử lý preprocessing (dynamic_preprocess, build_transform)
+       - Rất tốt cho OCR và hiểu tài liệu tiếng Việt
+    2. Làm sạch text (giữ dấu tiếng Việt)
     
-    **Lưu ý**: Text trả về sẽ GIỮ NGUYÊN DẤU TIẾNG VIỆT
+    **Lưu ý**: 
+    - Text trả về sẽ GIỮ NGUYÊN DẤU TIẾNG VIỆT
+    - Hỗ trợ ảnh chat screenshots với nhiều dòng text
+    - Trích xuất toàn bộ nội dung trong ảnh
     """
     try:
         # Validate file type
@@ -47,13 +51,9 @@ async def extract_text_from_image(
         
         logger.info(f"Processing image: {image.filename}, size: {len(image_bytes)} bytes")
         
-        # Bước 1: Tiền xử lý ảnh
-        logger.info("Step 1: Preprocessing image...")
-        processed_image = await preprocessor.preprocess(image_bytes)
-        
-        # Bước 2: OCR tiếng Việt
-        logger.info("Step 2: Extracting text with OCR...")
-        raw_text = await ocr_service.extract_text(processed_image)
+        # Bước 1: OCR tiếng Việt với Vintern - model tự động xử lý preprocessing
+        logger.info("Step 1: Extracting text with Vintern OCR...")
+        raw_text = await ocr_service.extract_text(image_bytes)
         
         if not raw_text or len(raw_text.strip()) == 0:
             logger.warning("No text extracted from image")
@@ -73,8 +73,8 @@ async def extract_text_from_image(
                 }
             )
         
-        # Bước 3: Làm sạch text (GIỮ DẤU TIẾNG VIỆT)
-        logger.info("Step 3: Cleaning text (preserving Vietnamese accents)...")
+        # Bước 2: Làm sạch text (GIỮ DẤU TIẾNG VIỆT)
+        logger.info("Step 2: Cleaning text (preserving Vietnamese accents)...")
         cleaned_text = text_cleaner.clean_text(raw_text)
         
         # Đảm bảo giữ dấu tiếng Việt

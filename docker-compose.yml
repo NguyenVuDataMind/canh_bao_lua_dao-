@@ -28,12 +28,17 @@ services:
       - .env
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-fraud_user}:${POSTGRES_PASSWORD:-fraud_password}@db:5432/${POSTGRES_DB:-fraud_alert}
-    command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 5000"
+      # Hugging Face cache directory
+      - HF_HOME=/app/.cache/huggingface
+    # Entrypoint script handles migrations and server startup
+    # command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 5000"
     ports:
       - "${APP_PORT:-5000}:5000"
     volumes:
       - .:/app
       - /app/.venv  # Exclude venv from volume
+      # Persist Hugging Face model cache between container restarts
+      - huggingface_cache:/app/.cache/huggingface
     depends_on:
       db:
         condition: service_healthy
@@ -43,6 +48,9 @@ services:
 
 volumes:
   postgres_data:
+  # Volume để persist Hugging Face model cache
+  # Model sẽ được lưu ở đây và không bị mất khi container restart
+  huggingface_cache:
 
 networks:
   fraud-network:
