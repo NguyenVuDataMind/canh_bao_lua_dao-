@@ -7,6 +7,7 @@ class ScamClassification(BaseModel):
     score: float  # Confidence score (0-1)
     label: str  # "lừa đảo" hoặc "không lừa đảo"
     probabilities: Dict[str, float]  # Xác suất cho từng class
+    explanation: Optional[str] = None  # Giải thích tại sao lừa đảo/không lừa đảo (từ Gemini)
 
 class TextExtractionResponse(BaseModel):
     """Response schema cho text extraction từ ảnh"""

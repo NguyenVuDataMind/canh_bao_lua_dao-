@@ -43,3 +43,5 @@ numpy<2.0.0,>=1.21.0
 pillow>=10.2.0
 # PhoBERT fine-tuning và classification
 scikit-learn>=1.0.0
+# Gemini AI for explanation
+google-genai>=0.2.0

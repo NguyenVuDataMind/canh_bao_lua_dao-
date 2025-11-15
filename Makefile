@@ -22,7 +22,7 @@ verify-model:
 	@python scripts/verify_model.py
 
 build:
-	docker-compose build
+	DOCKER_BUILDKIT=1 docker-compose build
 
 build-with-model: train-model verify-model build
 	@echo "✓ Model trained and Docker image built successfully!"

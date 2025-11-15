@@ -3,7 +3,6 @@ FROM python:3.11-slim as base
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
 RUN apt-get update && apt-get install -y \
@@ -46,8 +45,10 @@ RUN pip install --upgrade pip setuptools wheel
 COPY requirements.txt pyproject.toml poetry.lock* ./
 
 # Install all dependencies from requirements.txt
-RUN echo "Installing dependencies from requirements.txt..." && \
-    pip install --no-cache-dir -r requirements.txt && \
+# Use BuildKit cache mount for faster builds (cache stored outside image)
+RUN --mount=type=cache,target=/root/.cache/pip \
+    echo "Installing dependencies from requirements.txt..." && \
+    pip install -r requirements.txt && \
     echo "✓ All dependencies installed successfully"
 
 # Verify key dependencies are installed

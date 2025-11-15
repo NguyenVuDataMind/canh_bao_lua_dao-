@@ -3,8 +3,10 @@ from app.deps.users import CurrentUser
 from app.services.vintern_ocr_service import VinternOCRService
 from app.services.text_cleaning import TextCleaner
 from app.services.phobert_scam_classifier import PhoBERTScamClassifier
+from app.services.gemini_explanation_service import GeminiExplanationService
 from app.schemas.scam_detection import TextExtractionResponse
 import logging
+import os
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -30,6 +32,24 @@ def get_phobert_classifier():
             logger.warning("Scam classification will be skipped")
     return phobert_classifier
 
+# Initialize Gemini explanation service (lazy load)
+gemini_service = None
+
+def get_gemini_service():
+    """Lazy load Gemini explanation service"""
+    global gemini_service
+    if gemini_service is None:
+        try:
+            gemini_service = GeminiExplanationService(
+                api_key=os.getenv("GEMINI_API_KEY"),
+                model_name=os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+            )
+            logger.info("Gemini explanation service initialized")
+        except Exception as e:
+            logger.warning(f"Could not load Gemini service: {str(e)}")
+            logger.warning("Explanation will use fallback")
+    return gemini_service
+
 @router.post("/extract-text", response_model=TextExtractionResponse)
 async def extract_text_from_image(
     # TODO: Thêm lại authentication sau khi hoàn thành dịch vụ
@@ -38,10 +58,11 @@ async def extract_text_from_image(
     raw_text_input: Optional[str] = Form(None)
 ):
     """
-    Trích xuất text từ ảnh HOẶC nhận text trực tiếp, sau đó phân loại lừa đảo:
+    Trích xuất text từ ảnh HOẶC nhận text trực tiếp, sau đó phân loại lừa đảo và giải thích:
     1. OCR tiếng Việt (Vintern-1B-v3.5) - nếu có ảnh
     2. Làm sạch text (giữ dấu tiếng Việt)
     3. Phân loại lừa đảo (PhoBERT fine-tuned)
+    4. Giải thích tại sao lừa đảo/không lừa đảo (Gemini AI)
     
     **Input options:**
     - `image`: Upload ảnh (multipart/form-data)
@@ -51,6 +72,7 @@ async def extract_text_from_image(
     - Phải có ít nhất 1 trong 2: `image` hoặc `raw_text_input`
     - Text trả về sẽ GIỮ NGUYÊN DẤU TIẾNG VIỆT
     - Kết quả phân loại lừa đảo từ PhoBERT model đã fine-tune
+    - Explanation được tạo bằng Gemini AI (tiếng Việt, dễ hiểu)
     """
     try:
         # Validate input
@@ -135,6 +157,25 @@ async def extract_text_from_image(
         except Exception as e:
             logger.error(f"Error in scam classification: {str(e)}", exc_info=True)
             # Continue without classification
+        
+        # Bước 4: Tạo explanation với Gemini (nếu có classification)
+        if classification:
+            try:
+                exp_service = get_gemini_service()
+                if exp_service:
+                    logger.info("Step 4: Generating explanation with Gemini...")
+                    explanation = exp_service.explain(
+                        text=cleaned_text,
+                        classification=classification,
+                        detected_urls=urls,
+                        detected_phones=phones
+                    )
+                    # Thêm explanation vào classification
+                    classification['explanation'] = explanation
+                    logger.info("Explanation generated successfully")
+            except Exception as e:
+                logger.error(f"Error generating explanation: {str(e)}", exc_info=True)
+                # Continue without explanation
         
         logger.info(f"Extraction completed. Text length: {len(cleaned_text)} chars")
         
