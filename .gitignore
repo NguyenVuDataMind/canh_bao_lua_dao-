@@ -1,4 +1,8 @@
 # Environment
+.venv/
+venv/
+env/
+ENV/
 
 # Python
 __pycache__/
@@ -39,3 +43,28 @@ htmlcov/
 # Temporary files
 *.tmp
 *.bak
+
+# ML Models - KHÔNG push lên GitHub (quá lớn >100MB)
+data/models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.h5
+optimizer.pt
+training_args.bin
+
+# Hugging Face cache
+.cache/
+.huggingface/
+*.cache
+
+# Model checkpoints và training artifacts
+checkpoint-*/
+outputs/
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
