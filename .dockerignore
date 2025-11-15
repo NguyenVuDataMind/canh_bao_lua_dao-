@@ -69,3 +69,6 @@ logs/
 *.tmp
 *.bak
 
+# Exclude large training artifacts and checkpoints (we bake only the final model)
+data/models/phobert-scam-classifier/checkpoint-*/
+data/models/phobert-scam-classifier/logs/

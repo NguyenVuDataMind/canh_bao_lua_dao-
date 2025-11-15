@@ -39,6 +39,7 @@ services:
       - /app/.venv  # Exclude venv from volume
       # Persist Hugging Face model cache between container restarts
       - huggingface_cache:/app/.cache/huggingface
+      # Model is baked into the image; do NOT mount ./data/models to avoid overriding baked model
     depends_on:
       db:
         condition: service_healthy

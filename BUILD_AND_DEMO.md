@@ -3,28 +3,77 @@
 ## 📋 Yêu cầu
 
 - Docker và Docker Compose đã được cài đặt
+- Python 3.11+ (để train model trước khi build)
 - Ít nhất 4GB RAM trống
 - Kết nối internet để download models
 
 ## ⚠️ Lưu ý quan trọng
 
+- **PhoBERT Model**: Model cần được train TRƯỚC KHI build Docker image để tránh tốn thời gian khi container start
 - **PyMuPDF đã được bỏ qua**: Dockerfile đã được cấu hình để skip PyMuPDF (optional dependency cho PDF parsing) vì dự án chỉ cần OCR từ ảnh, không cần xử lý PDF
 - **Build sẽ nhanh hơn**: Không cần build PyMuPDF từ source (tiết kiệm thời gian)
 - **PaddleOCR vẫn hoạt động đầy đủ**: OCR từ ảnh hoạt động bình thường, chỉ không có tính năng PDF parsing
 
-## 🚀 Build Docker Image
+## 🤖 Train PhoBERT Model (BẮT BUỘC trước khi build)
 
-### Bước 1: Build image
+### Cách 1: Dùng Makefile (Khuyến nghị)
 
 ```bash
+# Train model
+make train-model
+
+# Verify model đã train đúng
+make verify-model
+
+# Hoặc train + verify + build cùng lúc
+make build-with-model
+```
+
+### Cách 2: Chạy trực tiếp
+
+```bash
+# Train model
+python scripts/finetune_phobert.py
+
+# Verify model
+python scripts/verify_model.py
+```
+
+**Lưu ý**:
+- Training có thể mất 10-30 phút tùy vào CPU/GPU
+- Model sẽ được lưu tại: `data/models/phobert-scam-classifier/`
+- Sau khi train xong, model sẽ sẵn sàng cho Docker build
+
+## 🚀 Build Docker Image
+
+### Bước 1: Đảm bảo model đã được train
+
+```bash
+# Kiểm tra model đã có chưa
+make verify-model
+```
+
+Nếu chưa có model, chạy:
+```bash
+make train-model
+```
+
+### Bước 2: Build image
+
+```bash
+# Dùng Makefile
+make build
+
+# Hoặc build trực tiếp
 docker build -t fraud-alert-api .
 ```
 
 **Lưu ý**: 
 - Build có thể mất 10-20 phút tùy vào tốc độ internet
 - PaddleOCR sẽ tự động download models trong lúc build (lần đầu)
+- Model đã train sẽ được copy vào image
 
-### Bước 2: Kiểm tra build thành công
+### Bước 3: Kiểm tra build thành công
 
 Nếu build thành công, bạn sẽ thấy các message:
 ```

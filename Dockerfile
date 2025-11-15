@@ -56,6 +56,9 @@ RUN echo "Verifying key dependencies..." && \
     echo "✓ All dependencies verified successfully"
 
 # Copy application code
+# Note: If model is trained before build, it will be included in the image
+# However, docker-compose.yml uses volume mount for ./data/models, so
+# the model from host will override the one in image (allows model updates without rebuild)
 COPY . .
 
 # Copy entrypoint script
