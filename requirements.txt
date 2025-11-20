@@ -41,7 +41,8 @@ timm>=0.9.0
 # Image processing dependencies (for Vintern preprocessing)
 numpy<2.0.0,>=1.21.0
 pillow>=10.2.0
-# PhoBERT fine-tuning và classification
-scikit-learn>=1.0.0
-# Gemini AI for explanation
+# Gemini AI for classification and explanation
 google-genai>=0.2.0
+# Web scraping for whitelist crawling
+requests>=2.32.0
+beautifulsoup4>=4.12.0

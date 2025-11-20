@@ -8,6 +8,7 @@ from starlette.responses import FileResponse
 
 from app.api import api_router
 from app.core.config import settings
+from app.core.logger import logger
 from app.deps.users import fastapi_users, jwt_authentication
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 
@@ -122,3 +123,5 @@ def use_route_names_as_operation_ids(app: FastAPI) -> None:
                 raise Exception("Route function names should be unique")
             route.operation_id = route.name
             route_names.add(route.name)
+
+

@@ -47,11 +47,80 @@ services:
     networks:
       - fraud-network
 
+  # Airflow services - Crawler tự động cho trusted URLs
+  airflow-postgres:
+    image: postgres:15
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5435:5432"
+    volumes:
+      - airflow_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - fraud-network
+
+  airflow:
+    image: apache/airflow:2.10.2
+    container_name: airflow-crawler
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+      db:
+        condition: service_healthy  # Đợi App DB sẵn sàng
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow"
+      MAX_PAGE: "2000"
+      SLEEP: "0.5"
+      # Thông tin App DB để script kết nối
+      APP_DB_HOST: "fraud_alert_db"
+      APP_DB_PORT: "5432"
+      APP_DB_USER: "${POSTGRES_USER:-fraud_user}"
+      APP_DB_PASSWORD: "${POSTGRES_PASSWORD:-fraud_password}"
+      APP_DB_NAME: "${POSTGRES_DB:-fraud_alert}"
+    volumes:
+      - ./airflow-crawler/dags:/opt/airflow/dags
+      - ./airflow-crawler/crawl_incremental_pg.py:/opt/airflow/crawl_incremental_pg.py
+    command: >
+      bash -lc "
+      pip install requests beautifulsoup4 psycopg2-binary &&
+      airflow db migrate &&
+      airflow users create -u admin -p admin -r Admin -e a@a -f a -l d || true &&
+      airflow webserver
+      "
+    ports:
+      - "8083:8080"
+    restart: unless-stopped
+    networks:
+      - fraud-network
+
+  adminer:
+    image: adminer
+    container_name: airflow-adminer
+    ports:
+      - "8082:8080"
+    depends_on:
+      - airflow-postgres
+    restart: unless-stopped
+    networks:
+      - fraud-network
+
 volumes:
   postgres_data:
   # Volume để persist Hugging Face model cache
   # Model sẽ được lưu ở đây và không bị mất khi container restart
   huggingface_cache:
+  airflow_pgdata:
 
 networks:
   fraud-network:

@@ -10,7 +10,8 @@ mkdir -p /app/.cache/huggingface
 chown -R app:app /app/.cache/huggingface || true
 chmod -R 755 /app/.cache/huggingface || true
 
-# Switch to app user and run migrations + server
-echo "Switching to app user and starting application..."
-exec gosu app sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 5000"
+# Run migrations and server as root (temporary solution for permission issues)
+# TODO: Fix permissions properly to run as app user
+echo "Running migrations and starting application..."
+alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 5000
 

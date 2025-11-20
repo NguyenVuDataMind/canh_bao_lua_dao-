@@ -1,10 +1,10 @@
-from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status, Form
-from app.deps.users import CurrentUser
+from fastapi import APIRouter, File, UploadFile, HTTPException, status, Form
+from app.deps.db import CurrentAsyncSession
 from app.services.vintern_ocr_service import VinternOCRService
 from app.services.text_cleaning import TextCleaner
-from app.services.phobert_scam_classifier import PhoBERTScamClassifier
 from app.services.gemini_explanation_service import GeminiExplanationService
 from app.schemas.scam_detection import TextExtractionResponse
+from app.services.url_whitelist import WhitelistService
 import logging
 import os
 from typing import Optional
@@ -17,26 +17,11 @@ router = APIRouter(prefix="/image-processing")
 ocr_service = VinternOCRService(use_gpu=False)
 text_cleaner = TextCleaner()
 
-# Initialize PhoBERT classifier (lazy load để tránh lỗi nếu model chưa fine-tune)
-phobert_classifier = None
-
-def get_phobert_classifier():
-    """Lazy load PhoBERT classifier"""
-    global phobert_classifier
-    if phobert_classifier is None:
-        try:
-            phobert_classifier = PhoBERTScamClassifier(use_gpu=False)
-            logger.info("PhoBERT classifier initialized")
-        except Exception as e:
-            logger.warning(f"Could not load PhoBERT classifier: {str(e)}")
-            logger.warning("Scam classification will be skipped")
-    return phobert_classifier
-
-# Initialize Gemini explanation service (lazy load)
+# Initialize Gemini service (lazy load)
 gemini_service = None
 
 def get_gemini_service():
-    """Lazy load Gemini explanation service"""
+    """Lazy load Gemini service"""
     global gemini_service
     if gemini_service is None:
         try:
@@ -44,16 +29,17 @@ def get_gemini_service():
                 api_key=os.getenv("GEMINI_API_KEY"),
                 model_name=os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
             )
-            logger.info("Gemini explanation service initialized")
+            logger.info("Gemini service initialized")
         except Exception as e:
             logger.warning(f"Could not load Gemini service: {str(e)}")
-            logger.warning("Explanation will use fallback")
+            logger.warning("Classification will use fallback")
     return gemini_service
 
 @router.post("/extract-text", response_model=TextExtractionResponse)
 async def extract_text_from_image(
     # TODO: Thêm lại authentication sau khi hoàn thành dịch vụ
     # user: CurrentUser,  # ← Uncomment dòng này để bật lại authentication
+    session: CurrentAsyncSession,
     image: Optional[UploadFile] = File(None),
     raw_text_input: Optional[str] = Form(None)
 ):
@@ -61,8 +47,8 @@ async def extract_text_from_image(
     Trích xuất text từ ảnh HOẶC nhận text trực tiếp, sau đó phân loại lừa đảo và giải thích:
     1. OCR tiếng Việt (Vintern-1B-v3.5) - nếu có ảnh
     2. Làm sạch text (giữ dấu tiếng Việt)
-    3. Phân loại lừa đảo (PhoBERT fine-tuned)
-    4. Giải thích tại sao lừa đảo/không lừa đảo (Gemini AI)
+    3. Phân loại lừa đảo và giải thích (Gemini AI)
+    4. Kiểm tra URL với whitelist
     
     **Input options:**
     - `image`: Upload ảnh (multipart/form-data)
@@ -71,8 +57,8 @@ async def extract_text_from_image(
     **Lưu ý**: 
     - Phải có ít nhất 1 trong 2: `image` hoặc `raw_text_input`
     - Text trả về sẽ GIỮ NGUYÊN DẤU TIẾNG VIỆT
-    - Kết quả phân loại lừa đảo từ PhoBERT model đã fine-tune
-    - Explanation được tạo bằng Gemini AI (tiếng Việt, dễ hiểu)
+    - Kết quả phân loại lừa đảo và giải thích được tạo bằng Gemini AI (tiếng Việt, dễ hiểu)
+    - Cần GEMINI_API_KEY trong environment variables
     """
     try:
         # Validate input
@@ -146,36 +132,29 @@ async def extract_text_from_image(
         # Thống kê
         stats = text_cleaner.get_cleaning_stats(raw_text, cleaned_text)
         
-        # Bước 3: Phân loại lừa đảo với PhoBERT
+        whitelist_results = []
+        if urls:
+            try:
+                whitelist_service = WhitelistService(session=session)
+                whitelist_results = await whitelist_service.check_urls(urls)
+            except Exception as e:
+                logger.error(f"Lỗi kiểm tra whitelist: {str(e)}", exc_info=True)
+
+        # Bước 3: Phân loại lừa đảo và giải thích với Gemini
         classification = None
         try:
-            classifier = get_phobert_classifier()
-            if classifier:
-                logger.info("Step 3: Classifying with PhoBERT...")
-                classification = classifier.predict(cleaned_text)
-                logger.info(f"Classification result: {classification['label']} (score: {classification['score']:.3f})")
+            service = get_gemini_service()
+            if service:
+                logger.info("Step 3: Classifying and explaining with Gemini...")
+                classification = service.classify_and_explain(
+                    text=cleaned_text,
+                    detected_urls=urls,
+                    detected_phones=phones
+                )
+                logger.info(f"Classification result: {'lừa đảo' if classification['is_scam'] else 'không lừa đảo'}")
         except Exception as e:
-            logger.error(f"Error in scam classification: {str(e)}", exc_info=True)
+            logger.error(f"Error in Gemini classification: {str(e)}", exc_info=True)
             # Continue without classification
-        
-        # Bước 4: Tạo explanation với Gemini (nếu có classification)
-        if classification:
-            try:
-                exp_service = get_gemini_service()
-                if exp_service:
-                    logger.info("Step 4: Generating explanation with Gemini...")
-                    explanation = exp_service.explain(
-                        text=cleaned_text,
-                        classification=classification,
-                        detected_urls=urls,
-                        detected_phones=phones
-                    )
-                    # Thêm explanation vào classification
-                    classification['explanation'] = explanation
-                    logger.info("Explanation generated successfully")
-            except Exception as e:
-                logger.error(f"Error generating explanation: {str(e)}", exc_info=True)
-                # Continue without explanation
         
         logger.info(f"Extraction completed. Text length: {len(cleaned_text)} chars")
         
@@ -186,7 +165,8 @@ async def extract_text_from_image(
             detected_phones=phones,
             detected_emails=emails,
             cleaning_stats=stats,
-            classification=classification
+            classification=classification,
+            whitelist_results=whitelist_results
         )
         
     except HTTPException:

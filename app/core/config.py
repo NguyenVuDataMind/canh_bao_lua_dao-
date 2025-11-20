@@ -50,5 +50,25 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str
 
+    WHITELIST_TRACKING_PARAMS: list[str] = [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_term",
+        "utm_content",
+        "fbclid",
+        "gclid",
+        "yclid",
+        "mc_eid",
+        "ref",
+        "source",
+        "sessionid",
+        "spm",
+        "redirect",
+    ]
+    WHITELIST_TRACKING_PREFIXES: list[str] = ["aff_", "fb_"]
+    WHITELIST_KEEP_PARAMS: list[str] = ["id", "product_id", "page", "category", "q", "s"]
+    # Crawler đã được thay thế bằng Airflow (xem airflow-crawler/)
+
 
 settings = Settings()
