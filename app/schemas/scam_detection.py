@@ -22,4 +22,5 @@ class TextExtractionResponse(BaseModel):
     cleaning_stats: dict
     classification: Optional[ScamClassification] = None  # Kết quả phân loại từ Gemini
     whitelist_results: List[URLWhitelistMatchResult] = Field(default_factory=list)
+    verdict_summary: str = ""  # Thông điệp tự nhiên để hiển thị ra UI
 

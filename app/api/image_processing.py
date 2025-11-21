@@ -35,6 +35,42 @@ def get_gemini_service():
             logger.warning("Classification will use fallback")
     return gemini_service
 
+
+def build_verdict_summary(classification: Optional[dict]) -> str:
+    """
+    Tạo ra thông điệp tự nhiên dựa trên kết quả classification để hiển thị cho người dùng cuối.
+    """
+    if not classification:
+        return "Chưa đủ dữ liệu để kết luận nội dung có phải lừa đảo hay không."
+
+    is_scam = classification.get("is_scam", False)
+    sections = []
+
+    if is_scam:
+        sections.append("Hệ thống phát hiện nhiều dấu hiệu lừa đảo trong nội dung này.")
+        scam_topic = classification.get("scam_topic")
+        if scam_topic:
+            sections.append(f"Chủ đề chính: {scam_topic}.")
+        scam_points = classification.get("scam_points") or []
+        if scam_points:
+            sections.append(f"Dấu hiệu nổi bật: {', '.join(scam_points)}.")
+        recommendations = classification.get("recommendations")
+        if recommendations:
+            sections.append(f"Khuyến nghị hành động: {recommendations}.")
+    else:
+        sections.append("Hiện chưa thấy dấu hiệu lừa đảo trong nội dung này.")
+        reason = classification.get("why_not_scam")
+        if reason:
+            sections.append(f"Lý do: {reason}.")
+        topic = classification.get("conversation_topic")
+        if topic:
+            sections.append(f"Nội dung cuộc trò chuyện xoay quanh: {topic}.")
+        recommendations = classification.get("recommendations")
+        if recommendations:
+            sections.append(f"Gợi ý thêm: {recommendations}.")
+
+    return " ".join(sections).strip()
+
 @router.post("/extract-text", response_model=TextExtractionResponse)
 async def extract_text_from_image(
     # TODO: Thêm lại authentication sau khi hoàn thành dịch vụ
@@ -116,7 +152,8 @@ async def extract_text_from_image(
                     'phones_found': 0,
                     'emails_found': 0
                 },
-                classification=None
+                classification=None,
+                verdict_summary=""
             )
         
         # Bước 2: Làm sạch text (GIỮ DẤU TIẾNG VIỆT)
@@ -158,6 +195,8 @@ async def extract_text_from_image(
         
         logger.info(f"Extraction completed. Text length: {len(cleaned_text)} chars")
         
+        verdict_summary = build_verdict_summary(classification)
+
         return TextExtractionResponse(
             extracted_text=raw_text,
             cleaned_text=cleaned_text,
@@ -166,7 +205,8 @@ async def extract_text_from_image(
             detected_emails=emails,
             cleaning_stats=stats,
             classification=classification,
-            whitelist_results=whitelist_results
+            whitelist_results=whitelist_results,
+            verdict_summary=verdict_summary
         )
         
     except HTTPException:

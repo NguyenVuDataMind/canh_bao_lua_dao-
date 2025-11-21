@@ -88,6 +88,7 @@ services:
       APP_DB_USER: "${POSTGRES_USER:-fraud_user}"
       APP_DB_PASSWORD: "${POSTGRES_PASSWORD:-fraud_password}"
       APP_DB_NAME: "${POSTGRES_DB:-fraud_alert}"
+      PG_DSN: "postgresql://${POSTGRES_USER:-fraud_user}:${POSTGRES_PASSWORD:-fraud_password}@fraud_alert_db:5432/${POSTGRES_DB:-fraud_alert}"
     volumes:
       - ./airflow-crawler/dags:/opt/airflow/dags
       - ./airflow-crawler/crawl_incremental_pg.py:/opt/airflow/crawl_incremental_pg.py
@@ -96,6 +97,7 @@ services:
       pip install requests beautifulsoup4 psycopg2-binary &&
       airflow db migrate &&
       airflow users create -u admin -p admin -r Admin -e a@a -f a -l d || true &&
+      airflow scheduler &
       airflow webserver
       "
     ports:
