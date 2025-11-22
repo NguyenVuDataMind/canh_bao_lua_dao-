@@ -1,3 +1,1469 @@
-Non-API route not found.
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeNet Hub · Bảo vệ bạn khỏi lừa đảo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #041b2f;
+            --bg-gradient-start: #052640;
+            --bg-gradient-end: #01212f;
+            --primary: #00c16a;
+            --secondary: #00b0ff;
+            --accent: #ff695a;
+            --text: #e4f1ff;
+            --text-muted: rgba(228, 241, 255, 0.72);
+            --card-bg: rgba(8, 27, 48, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.06);
+            --shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+        }
 
-This is a dummy file that's replaced by the real index.html file in the monolith Dockerfile.
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #07355c, #031525);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .hub {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        header.hero {
+            min-height: 100vh;
+            padding: 32px clamp(20px, 4vw, 80px) 80px;
+            background: radial-gradient(circle at top right, rgba(0, 177, 255, 0.35), transparent 35%),
+                        radial-gradient(circle at 10% 20%, rgba(0, 193, 106, 0.35), transparent 30%),
+                        linear-gradient(120deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            position: relative;
+            overflow: hidden;
+        }
+
+        header.hero::after,
+        header.hero::before {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(0, 177, 255, 0.6), transparent 65%);
+            top: -120px;
+            right: -80px;
+            filter: blur(10px);
+        }
+
+        header.hero::before {
+            width: 280px;
+            height: 280px;
+            top: auto;
+            bottom: -140px;
+            right: auto;
+            left: -80px;
+            background: radial-gradient(circle, rgba(0, 193, 106, 0.55), transparent 60%);
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .brand {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        nav.primary-nav {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            font-weight: 500;
+        }
+
+        nav.primary-nav a {
+            opacity: 0.78;
+            transition: opacity 0.2s ease;
+        }
+
+        nav.primary-nav a:hover {
+            opacity: 1;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            border-radius: 999px;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .chip.primary {
+            background: var(--primary);
+            border-color: transparent;
+            color: #042818;
+        }
+
+        .chip.secondary {
+            background: linear-gradient(120deg, var(--secondary), #36d7ff);
+            border-color: transparent;
+            color: #00121f;
+        }
+
+        .chip.sos {
+            background: linear-gradient(120deg, var(--accent), #ff9a7a);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #360101;
+        }
+
+        .chip:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-body {
+            display: flex;
+            align-items: center;
+            gap: clamp(30px, 5vw, 80px);
+            margin-top: clamp(30px, 7vh, 80px);
+            flex-wrap: wrap;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .hero-title {
+            font-size: clamp(40px, 7vw, 80px);
+            line-height: 1.05;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .hero-title span {
+            color: var(--primary);
+        }
+
+        .hero-description {
+            margin-top: 20px;
+            font-size: 18px;
+            max-width: 480px;
+            color: var(--text-muted);
+        }
+
+        .cta-form {
+            margin-top: 32px;
+            display: flex;
+            gap: 12px;
+            max-width: 560px;
+            padding: 12px;
+            border-radius: var(--radius-lg);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+        }
+
+        .cta-form input {
+            flex: 1;
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            border: 0;
+            background: rgba(0, 0, 0, 0.35);
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .cta-form button {
+            border: 0;
+            background: linear-gradient(120deg, var(--primary), #02f28b);
+            color: #01301c;
+            font-weight: 700;
+            padding: 0 28px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .cta-form button:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .orb {
+            width: clamp(260px, 45vw, 420px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 55%),
+                        radial-gradient(circle at 30% 30%, #06263c, #01111e 65%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            position: relative;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35), inset 0 0 80px rgba(0, 193, 106, 0.4);
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .orb::before,
+        .orb::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .orb::before {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            background: rgba(0, 193, 106, 0.2);
+            filter: blur(6px);
+        }
+
+        .orb::after {
+            width: 30%;
+            height: 30%;
+            right: 10%;
+            top: 10%;
+            background: rgba(255, 255, 255, 0.25);
+            filter: blur(4px);
+        }
+
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        main {
+            background: linear-gradient(180deg, rgba(2, 10, 22, 0.95), rgba(1, 8, 18, 0.95));
+            padding: clamp(32px, 6vw, 80px);
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .lookup-result {
+            margin-top: 18px;
+            background: linear-gradient(120deg, rgba(0, 193, 106, 0.12), rgba(0, 118, 255, 0.12));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            display: none;
+        }
+
+        .lookup-result.visible {
+            display: block;
+        }
+
+        .lookup-result h4 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .lookup-result p {
+            margin: 6px 0 0;
+            color: var(--text-muted);
+        }
+
+        .panel-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: clamp(20px, 3vw, 36px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .ai-grid,
+        .report-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .input-note {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #lessons {
+            text-align: center;
+        }
+
+        .lesson-shell {
+            background: rgba(8, 27, 48, 0.9);
+            border-radius: var(--radius-lg);
+            padding: clamp(24px, 4vw, 48px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin: 0 auto;
+            max-width: 1100px;
+            text-align: left;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .category-tab {
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .category-tab span {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.4px;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(120deg, var(--primary), #26ffbf);
+            color: #001d11;
+            border-color: transparent;
+        }
+
+        .lesson-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            justify-items: center;
+        }
+
+        .lesson-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease, border 0.2s ease;
+        }
+
+        .lesson-card.active {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .lesson-status {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+        }
+
+        .lesson-card h4 {
+            margin: 8px 0 0;
+        }
+
+        .lesson-detail {
+            margin-top: 32px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: clamp(18px, 3vw, 36px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .lesson-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .lesson-header h3 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .lesson-tag {
+            padding: 10px 20px;
+            border-radius: 999px;
+            background: rgba(0, 193, 106, 0.15);
+            border: 1px solid rgba(0, 193, 106, 0.4);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .lesson-summary {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(4, 20, 38, 0.7);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .coming-soon h3 {
+            margin-top: 0;
+        }
+
+        .lesson-media {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .video-panel {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: radial-gradient(circle, rgba(0, 177, 255, 0.18), rgba(0, 9, 20, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 0;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-panel iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: rgba(1, 9, 18, 0.7);
+            text-align: center;
+        }
+
+        .video-overlay button {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            border: 0;
+            font-size: 30px;
+            background: white;
+            color: #062021;
+            cursor: pointer;
+        }
+
+        .knowledge-panel {
+            background: rgba(4, 20, 38, 0.85);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .risk-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .risk-tab {
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 18px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .risk-tab.active {
+            background: var(--secondary);
+            color: #00142a;
+            border-color: transparent;
+        }
+
+        .risk-card {
+            position: relative;
+            border-radius: 20px;
+            padding: 32px;
+            background: radial-gradient(circle at top left, rgba(0, 176, 255, 0.15), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            min-height: 220px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .risk-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 18px;
+        }
+
+        .risk-title {
+            font-size: 24px;
+            margin: 0 0 12px;
+        }
+
+        .risk-meta {
+            font-size: 13px;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .risk-content {
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .quiz-card {
+            background: rgba(3, 12, 24, 0.85);
+            border-radius: 24px;
+            padding: clamp(20px, 3vw, 36px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .question-steps {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-card h3 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .quiz-option {
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 18px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .quiz-option.correct {
+            border-color: #0ed290;
+            background: rgba(14, 210, 144, 0.12);
+        }
+
+        .quiz-option.incorrect {
+            border-color: #ff7070;
+            background: rgba(255, 112, 112, 0.12);
+        }
+
+        .badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        footer {
+            padding: 40px clamp(24px, 5vw, 80px);
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: #030d18;
+        }
+
+        .tabs {
+            display: inline-flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 18px;
+            cursor: pointer;
+            background: transparent;
+            color: white;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: #012013;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-grid input,
+        .form-grid textarea,
+        .form-grid select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            font-size: 15px;
+        }
+
+        .form-grid textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-grid label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .submit-btn {
+            margin-top: 12px;
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            border: 0;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(120deg, var(--primary), #03e37f);
+            color: #022518;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .status-pill.success {
+            color: #0ed290;
+        }
+
+        .status-pill.error {
+            color: #ff8b8b;
+        }
+
+        @media (max-width: 900px) {
+            nav.primary-nav {
+                display: none;
+            }
+            .hero-body {
+                flex-direction: column;
+            }
+            .cta-form {
+                flex-direction: column;
+            }
+            .cta-form button {
+                width: 100%;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hub">
+        <header class="hero" id="home">
+            <div class="nav-bar">
+                <div class="brand">Safe<span>Net</span></div>
+                <nav class="primary-nav">
+                    <a href="#home" data-scroll="#home">Tin tức</a>
+                    <a href="#lookup" data-scroll="#lookup">Tài nguyên</a>
+                    <a href="#lessons" data-scroll="#lessons">Bài học</a>
+                    <a href="#about" data-scroll="#about">Đối tác</a>
+                </nav>
+                <div class="nav-actions">
+                    <button type="button" class="chip" data-scroll="#report">Báo cáo</button>
+                    <button type="button" class="chip primary" data-scroll="#ai">AI tư vấn</button>
+                    <button type="button" class="chip secondary" data-scroll="#lessons">Bài học</button>
+                    <button type="button" class="chip sos" data-scroll="#report">SOS cầu cứu</button>
+                </div>
+            </div>
+
+            <div class="hero-body">
+                <div class="hero-text">
+                    <p style="letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-muted); margin: 0;">
+                        SafeNet Hub
+                    </p>
+                    <h1 class="hero-title">Bạn có đang lướt mạng <span>an toàn?</span></h1>
+                    <p class="hero-description">
+                        Nhập đường dẫn hoặc số điện thoại để kiểm tra tức thì, trò chuyện cùng AI để phân tích ảnh/tin nhắn,
+                        và học các kỹ năng phòng chống lừa đảo ngay trên một giao diện duy nhất.
+                    </p>
+                    <form class="cta-form" id="lookupForm">
+                        <input type="text" id="lookupInput" placeholder="Nhập URL hoặc số điện thoại" />
+                        <button type="submit">Tra cứu ngay</button>
+                    </form>
+                    <div class="lookup-result" id="lookupResult">
+                        <h4>Kết quả sẽ hiển thị tại đây.</h4>
+                        <p>Ví dụ: nhập <code>https://example.com</code> hoặc <code>0912345678</code>.</p>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="orb"></div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="section" id="ai">
+                <div class="section-header">
+                    <div>
+                        <p style="text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin: 0;">Trò chuyện với AI</p>
+                        <h2>Phân tích ảnh hoặc văn bản ngay</h2>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="tabs" id="aiTabs">
+                        <button class="tab active" data-ai-mode="image">Ảnh cuộc trò chuyện</button>
+                        <button class="tab" data-ai-mode="text">Văn bản trực tiếp</button>
+                    </div>
+                    <div class="ai-grid">
+                        <div id="aiImageWrapper">
+                            <label>Ảnh màn hình / cuộc trò chuyện</label>
+                            <input type="file" id="aiImageInput" accept="image/*" />
+                            <p class="input-note">Hỗ trợ JPG, PNG, HEIC. Dung lượng &lt; 5MB.</p>
+                        </div>
+                        <div id="aiTextWrapper" class="hidden">
+                            <label>Nội dung văn bản</label>
+                            <textarea id="aiTextInput" placeholder="Ví dụ: 'Ngân hàng thông báo tài khoản của bạn bị khóa, hãy chuyển khoản...'"></textarea>
+                        </div>
+                        <button class="submit-btn" id="aiSubmit">Gửi tới AI tư vấn</button>
+                        <div class="lookup-result" id="aiResult"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="report">
+                <div class="section-header">
+                    <div>
+                        <p style="text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin: 0;">Đóng góp cộng đồng</p>
+                        <h2>Báo cáo số điện thoại hoặc URL đáng ngờ</h2>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="tabs" id="reportTabs">
+                        <button class="tab active" data-report-mode="phone">Báo cáo SĐT</button>
+                        <button class="tab" data-report-mode="url">Báo cáo URL</button>
+                    </div>
+                    <div class="report-grid" id="reportForms"></div>
+                </div>
+            </section>
+
+            <section class="section" id="lessons">
+                <div class="section-header">
+                    <div>
+                        <p style="text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin: 0;">SafeNet Academy</p>
+                        <h2>Chọn chuyên mục để học</h2>
+                    </div>
+                    <div class="category-tabs" id="categoryTabs"></div>
+                </div>
+                <div class="lesson-shell">
+                    <div class="lesson-list" id="lessonList"></div>
+                    <div class="lesson-detail" id="lessonDetail"></div>
+                </div>
+            </section>
+
+            <section class="section" id="about">
+                <div class="section-header">
+                    <div>
+                        <p style="text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin: 0;">Kết nối</p>
+                        <h2>Đối tác & truyền thông</h2>
+                    </div>
+                </div>
+                <p style="max-width: 640px; color: var(--text-muted);">
+                    SafeNet hợp tác cùng các tổ chức giáo dục, ngân hàng và công ty viễn thông để cập nhật dữ liệu lừa đảo mới nhất.
+                    Hãy liên hệ chúng tôi nếu bạn muốn mang chương trình này tới trường học hoặc doanh nghiệp.
+                </p>
+            </section>
+        </main>
+
+        <footer id="footer">
+            © <span id="year"></span> SafeNet · Bảo vệ bạn khỏi những chiêu trò lừa đảo.
+        </footer>
+    </div>
+
+    <script>
+        const scrollLinks = document.querySelectorAll('[data-scroll]');
+        scrollLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const target = document.querySelector(link.dataset.scroll);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Lookup form logic
+        const lookupForm = document.getElementById('lookupForm');
+        const lookupInput = document.getElementById('lookupInput');
+        const lookupResult = document.getElementById('lookupResult');
+
+        const isUrl = (value) => /https?:\/\//i.test(value) || value.includes('.');
+
+        lookupForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const value = lookupInput.value.trim();
+            if (!value) return;
+            lookupResult.classList.add('visible');
+            lookupResult.innerHTML = '<h4>Đang kiểm tra ...</h4>';
+
+            try {
+                if (isUrl(value)) {
+                    const response = await fetch('/api/v1/whitelist/check', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ urls: [value] }),
+                    });
+                    if (!response.ok) throw new Error('Không thể kiểm tra URL');
+                    const data = await response.json();
+                    const result = data.results[0];
+                    lookupResult.innerHTML = `
+                        <h4>${result.is_trusted ? 'Đường dẫn an toàn' : 'Không có trong whitelist'}</h4>
+                        <p>URL gốc: ${result.original_url}</p>
+                        <p>Trạng thái: ${result.is_trusted ? 'Được tin cậy' : 'Hãy cảnh giác và kiểm chứng thêm.'}</p>
+                    `;
+                } else {
+                    const response = await fetch('/api/v1/reported_phones/search?value=' + encodeURIComponent(value));
+                    if (!response.ok) throw new Error('Không thể kiểm tra SĐT');
+                    const exists = await response.json();
+                    lookupResult.innerHTML = exists
+                        ? '<h4>Số điện thoại đã bị báo cáo trước đó.</h4><p>Hãy cân nhắc dừng tương tác và báo lại cho SafeNet.</p>'
+                        : '<h4>Chưa có báo cáo về số này.</h4><p>Nếu bạn nghi ngờ, hãy gửi báo cáo và tiếp tục theo dõi.</p>';
+                }
+            } catch (error) {
+                lookupResult.innerHTML = `<h4>Đã xảy ra lỗi</h4><p>${error.message}</p>`;
+            }
+        });
+
+        // Lesson data
+        const lessonData = [
+            {
+                id: 'module-1',
+                title: 'Chuyên mục 1',
+                subtitle: 'Nhận diện rủi ro mạng xã hội',
+                lessons: [
+                    { id: 'cm1-b1', title: 'Bài 1 · Những rủi ro phổ biến', status: 'available' },
+                    { id: 'cm1-b2', title: 'Bài 2 · Sẽ sớm cập nhật', status: 'upcoming' },
+                    { id: 'cm1-b3', title: 'Bài 3 · Sẽ sớm cập nhật', status: 'upcoming' },
+                ],
+            },
+            {
+                id: 'module-2',
+                title: 'Chuyên mục 2',
+                subtitle: 'Bảo vệ tài khoản ngân hàng',
+                lessons: [
+                    { id: 'cm2-b1', title: 'Bài 1 · Đang phát triển', status: 'upcoming' },
+                    { id: 'cm2-b2', title: 'Bài 2 · Đang phát triển', status: 'upcoming' },
+                ],
+            },
+            {
+                id: 'module-3',
+                title: 'Chuyên mục 3',
+                subtitle: 'Kỹ năng báo cáo & tố giác',
+                lessons: [
+                    { id: 'cm3-b1', title: 'Bài 1 · Lên kế hoạch', status: 'upcoming' },
+                ],
+            },
+        ];
+
+        const categoryTabs = document.getElementById('categoryTabs');
+        const lessonList = document.getElementById('lessonList');
+        const lessonDetail = document.getElementById('lessonDetail');
+        let currentCategory = lessonData[0].id;
+        let currentLesson = 'cm1-b1';
+
+        const renderCategories = () => {
+            categoryTabs.innerHTML = '';
+            lessonData.forEach((category) => {
+                const button = document.createElement('button');
+                button.className = `category-tab ${currentCategory === category.id ? 'active' : ''}`;
+                button.innerHTML = `
+                    <strong>${category.title}</strong>
+                    <span>${category.subtitle || ''}</span>
+                `;
+                button.addEventListener('click', () => {
+                    currentCategory = category.id;
+                    currentLesson = category.lessons[0].id;
+                    renderCategories();
+                    renderLessons();
+                    renderLessonDetail();
+                });
+                categoryTabs.appendChild(button);
+            });
+        };
+
+        const renderLessons = () => {
+            lessonList.innerHTML = '';
+            const category = lessonData.find((cat) => cat.id === currentCategory);
+            category.lessons.forEach((lesson) => {
+                const card = document.createElement('div');
+                card.className = `lesson-card ${currentLesson === lesson.id ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div class="lesson-status">${lesson.status === 'available' ? 'Sẵn sàng' : 'Đang phát triển'}</div>
+                    <h4>${lesson.title}</h4>
+                `;
+                card.addEventListener('click', () => {
+                    currentLesson = lesson.id;
+                    renderLessons();
+                    renderLessonDetail();
+                });
+                lessonList.appendChild(card);
+            });
+        };
+
+        const renderLessonDetail = () => {
+            const activeCategory = lessonData.find((cat) => cat.id === currentCategory);
+            const activeLesson = activeCategory.lessons.find((lesson) => lesson.id === currentLesson);
+
+            if (!activeLesson || activeLesson.status !== 'available') {
+                lessonDetail.innerHTML = `
+                    <div class="coming-soon">
+                        <h3>Nội dung đang được biên soạn</h3>
+                        <p>Bài học này sẽ sớm cập nhật. Hãy quay lại sau!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            lessonDetail.innerHTML = `
+                <div class="lesson-header">
+                    <div>
+                        <p style="text-transform: uppercase; letter-spacing: 0.35em; color: var(--text-muted); margin: 0;">${activeCategory.subtitle}</p>
+                        <h3>${activeLesson.title}</h3>
+                    </div>
+                    <div class="lesson-tag">Đang học</div>
+                </div>
+                <div class="lesson-media">
+                    <div class="video-panel" id="lessonVideo">
+                        <div class="video-overlay">
+                            <button id="lessonPlay">▶</button>
+                            <p>Bấm để xem video mở đầu (YouTube)</p>
+                        </div>
+                    </div>
+                    <div class="lesson-summary">
+                        <h4 style="margin-top:0;">Bạn sẽ học gì?</h4>
+                        <p>
+                            Nhận diện nhanh các chiêu trò lừa đảo lan truyền trên mạng xã hội, cách đọc dấu hiệu bất thường
+                            trong tin nhắn và cách phản hồi an toàn. Hãy lật từng thẻ kiến thức bên dưới để xem mô tả, ví dụ
+                            thực tế và hậu quả tiềm ẩn.
+                        </p>
+                    </div>
+                </div>
+                <div class="knowledge-panel">
+                    <div class="risk-tabs" id="riskTabs"></div>
+                    <div class="risk-card" id="riskCard">
+                        <div class="risk-meta" id="riskMeta"></div>
+                        <div class="risk-icon" id="riskIcon">🛡️</div>
+                        <h3 class="risk-title" id="riskTitle"></h3>
+                        <p class="risk-content" id="riskContent"></p>
+                    </div>
+                </div>
+                <div class="quiz-card">
+                    <div class="question-steps" id="questionSteps"></div>
+                    <h3 id="questionText"></h3>
+                    <div class="quiz-options" id="optionsContainer"></div>
+                    <div class="answer-status" id="answerStatus">Chọn đáp án bạn nghĩ là đúng.</div>
+                </div>
+            `;
+
+            setupLessonInteractive();
+        };
+
+        const setupLessonInteractive = () => {
+            const youtubeId = 'axLuBnzS8UQ';
+            const videoContainer = document.getElementById('lessonVideo');
+            const playButton = document.getElementById('lessonPlay');
+            const overlay = videoContainer.querySelector('.video-overlay');
+
+            const loadVideo = () => {
+                videoContainer.innerHTML = '';
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+                iframe.style.border = '0';
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+                iframe.allowFullscreen = true;
+                videoContainer.appendChild(iframe);
+            };
+            playButton.addEventListener('click', loadVideo);
+            overlay.addEventListener('click', loadVideo);
+
+            const risks = [
+                {
+                    title: 'Lộ thông tin cá nhân',
+                    description: 'Đăng ảnh CCCD, thẻ sinh viên, check-in tại nhà/trường, công khai số điện thoại.',
+                    consequence: 'Dễ bị kẻ gian thu thập để mạo danh, chiếm đoạt tài khoản, vay tín dụng, bị “doxxing”.',
+                    icon: '🛂',
+                },
+                {
+                    title: 'Lừa đảo mạo danh',
+                    description: 'Tin nhắn “Tài khoản bị khóa, gửi mã OTP”; “Anh đang cần tiền gấp chuyển giúp”.',
+                    consequence: 'Mất tài khoản, mất tiền, bị chiếm đoạt dịch vụ thanh toán.',
+                    icon: '🎭',
+                },
+                {
+                    title: 'Theo dõi & quấy rối',
+                    description: 'Check-in nơi học, giờ đi chơi; bị người lạ bám theo, nhắn tin làm phiền.',
+                    consequence: 'Mất an toàn cá nhân, bị rình rập hoặc tấn công ngoài đời thực.',
+                    icon: '👁️',
+                },
+                {
+                    title: 'Bắt nạt mạng',
+                    description: 'Bình luận body shaming, bóc phốt, tung tin sai về bạn.',
+                    consequence: 'Ảnh hưởng tinh thần, trầm cảm, sợ hãi khi lên mạng.',
+                    icon: '⚡',
+                },
+                {
+                    title: 'Tin giả & thao túng thông tin',
+                    description: 'Tin nội dung giật gân, đầu tư coin, “trúng thưởng”, dễ bị dắt mũi.',
+                    consequence: 'Bị lừa tiền, lan truyền thông tin sai lệch, ảnh hưởng uy tín cá nhân.',
+                    icon: '📰',
+                },
+                {
+                    title: 'Gặp gỡ người lạ',
+                    description: 'Kết bạn qua ứng dụng hẹn hò, được rủ gặp tại nơi vắng vẻ.',
+                    consequence: 'Nguy cơ bị lợi dụng, lừa đảo, thậm chí tấn công.',
+                    icon: '📍',
+                },
+            ];
+
+            const riskTabs = document.getElementById('riskTabs');
+            const riskCard = document.getElementById('riskCard');
+            const riskMeta = document.getElementById('riskMeta');
+            const riskIcon = document.getElementById('riskIcon');
+            const riskTitle = document.getElementById('riskTitle');
+            const riskContent = document.getElementById('riskContent');
+
+            let currentRisk = 0;
+            let cardState = 0;
+            const metaLabels = [
+                'BƯỚC 1 · Nhấp để xem mô tả chi tiết',
+                'BƯỚC 2 · Mô tả & ví dụ thực tế',
+                'BƯỚC 3 · Hậu quả tiềm ẩn',
+            ];
+
+            const renderRiskTabs = () => {
+                riskTabs.innerHTML = '';
+                risks.forEach((risk, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `risk-tab ${index === currentRisk ? 'active' : ''}`;
+                    btn.textContent = `Rủi ro ${index + 1}`;
+                    btn.addEventListener('click', () => {
+                        currentRisk = index;
+                        cardState = 0;
+                        renderRiskCard();
+                        renderRiskTabs();
+                    });
+                    riskTabs.appendChild(btn);
+                });
+            };
+
+            const renderRiskCard = () => {
+                const risk = risks[currentRisk];
+                riskMeta.textContent = metaLabels[cardState];
+                riskIcon.textContent = risk.icon;
+                riskTitle.textContent = risk.title;
+                if (cardState === 0) {
+                    riskContent.textContent = 'Chạm vào thẻ để xem mô tả và ví dụ thực tế cho rủi ro này.';
+                } else if (cardState === 1) {
+                    riskContent.textContent = risk.description;
+                } else {
+                    riskContent.textContent = risk.consequence;
+                }
+            };
+
+            riskCard.addEventListener('click', () => {
+                cardState = (cardState + 1) % 3;
+                renderRiskCard();
+            });
+
+            renderRiskTabs();
+            renderRiskCard();
+
+            const quiz = [
+                {
+                    question:
+                        'Khi bạn đăng ảnh căn cước công dân hoặc chia sẻ thông tin cá nhân trên mạng xã hội, rủi ro lớn nhất là gì?',
+                    options: [
+                        'Tăng tương tác và được nhiều người biết đến hơn.',
+                        'Bị người khác đánh cắp thông tin, giả mạo danh tính.',
+                        'Không có rủi ro gì nếu để chế độ riêng tư.',
+                    ],
+                    answer: 1,
+                },
+                {
+                    question: 'Vì sao không nên check-in vị trí thật của mình?',
+                    options: [
+                        'Vì sẽ làm phiền bạn bè.',
+                        'Bị nghĩ là khoe mẽ.',
+                        'Kẻ xấu có thể theo dõi hoặc lợi dụng thông tin.',
+                    ],
+                    answer: 2,
+                },
+                {
+                    question: 'Một bình luận tiêu cực trên mạng có thể gây hậu quả nào?',
+                    options: [
+                        'Làm người khác vui hơn.',
+                        'Không có ảnh hưởng gì.',
+                        'Khiến người bị nhắm đến tổn thương tâm lý.',
+                    ],
+                    answer: 2,
+                },
+            ];
+
+            const questionSteps = document.getElementById('questionSteps');
+            const questionText = document.getElementById('questionText');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const answerStatus = document.getElementById('answerStatus');
+            let currentQuestion = 0;
+            const answered = Array(quiz.length).fill(false);
+
+            const renderSteps = () => {
+                questionSteps.innerHTML = '';
+                quiz.forEach((_, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `question-step ${idx === currentQuestion ? 'active' : ''}`;
+                    btn.textContent = idx + 1;
+                    btn.addEventListener('click', () => {
+                        currentQuestion = idx;
+                        renderQuestion();
+                        renderSteps();
+                    });
+                    questionSteps.appendChild(btn);
+                });
+            };
+
+            const renderQuestion = () => {
+                const data = quiz[currentQuestion];
+                questionText.textContent = `Câu ${currentQuestion + 1}: ${data.question}`;
+                optionsContainer.innerHTML = '';
+                answerStatus.textContent = answered[currentQuestion]
+                    ? 'Bạn đã trả lời câu này.'
+                    : 'Chọn đáp án mà bạn nghĩ chính xác.';
+                answerStatus.className = 'answer-status';
+
+                data.options.forEach((option, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-option';
+                    btn.innerHTML = `<span class="badge">${String.fromCharCode(65 + idx)}</span> ${option}`;
+                    btn.disabled = answered[currentQuestion];
+
+                    btn.addEventListener('click', () => {
+                        if (answered[currentQuestion]) return;
+                        answered[currentQuestion] = true;
+                        const isCorrect = idx === data.answer;
+                        btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                        answerStatus.textContent = isCorrect
+                            ? 'Chính xác! Bạn đã nắm được kiến thức.'
+                            : 'Chưa chính xác. Đáp án đúng đã được tô sáng.';
+                        answerStatus.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+                        Array.from(optionsContainer.children).forEach((child, optionIndex) => {
+                            child.classList.add('disabled');
+                            child.disabled = true;
+                            if (optionIndex === data.answer) {
+                                child.classList.add('correct');
+                            }
+                            if (optionIndex !== data.answer && child !== btn) {
+                                child.classList.add('incorrect');
+                            }
+                        });
+                    });
+                    optionsContainer.appendChild(btn);
+                });
+            };
+
+            renderSteps();
+            renderQuestion();
+        };
+
+        renderCategories();
+        renderLessons();
+        renderLessonDetail();
+
+        // AI tab logic
+        const aiTabs = document.querySelectorAll('#aiTabs .tab');
+        const aiImageInput = document.getElementById('aiImageInput');
+        const aiTextInput = document.getElementById('aiTextInput');
+        const aiResult = document.getElementById('aiResult');
+        const aiImageWrapper = document.getElementById('aiImageWrapper');
+        const aiTextWrapper = document.getElementById('aiTextWrapper');
+        let aiMode = 'image';
+
+        const updateAiMode = () => {
+            aiImageWrapper.classList.toggle('hidden', aiMode !== 'image');
+            aiTextWrapper.classList.toggle('hidden', aiMode !== 'text');
+        };
+
+        aiTabs.forEach((tab) =>
+            tab.addEventListener('click', () => {
+                aiMode = tab.dataset.aiMode;
+                aiTabs.forEach((t) => t.classList.remove('active'));
+                tab.classList.add('active');
+                updateAiMode();
+            })
+        );
+
+        updateAiMode();
+
+        document.getElementById('aiSubmit').addEventListener('click', async () => {
+            const formData = new FormData();
+            const file = aiImageInput.files[0];
+            const text = aiTextInput.value.trim();
+
+            if (aiMode === 'image' && !file) {
+                aiResult.classList.add('visible');
+                aiResult.innerHTML = '<h4>Vui lòng chọn ảnh cuộc trò chuyện.</h4>';
+                return;
+            }
+            if (aiMode === 'text' && !text) {
+                aiResult.classList.add('visible');
+                aiResult.innerHTML = '<h4>Vui lòng nhập nội dung văn bản.</h4>';
+                return;
+            }
+
+            if (file) formData.append('image', file);
+            if (text) formData.append('raw_text_input', text);
+
+            aiResult.classList.add('visible');
+            aiResult.innerHTML = '<h4>Đang phân tích...</h4>';
+
+            try {
+                const response = await fetch('/api/v1/image-processing/extract-text', {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (!response.ok) throw new Error('Không thể phân tích nội dung');
+                const data = await response.json();
+                aiResult.innerHTML = buildAiVerdict(data);
+            } catch (error) {
+                aiResult.innerHTML = `<h4>Lỗi</h4><p>${error.message}</p>`;
+            }
+        });
+
+        const buildAiVerdict = (data) => {
+            const classification = data.classification;
+            if (!classification) {
+                return '<h4>Chưa đủ dữ liệu để kết luận.</h4><p>Hãy thử lại với nội dung rõ hơn.</p>';
+            }
+            if (classification.is_scam) {
+                return `
+                    <h4>⚠️ Có dấu hiệu lừa đảo</h4>
+                    <p><strong>Chủ đề:</strong> ${classification.scam_topic || 'Không rõ'}</p>
+                    <p><strong>Dấu hiệu:</strong> ${(classification.scam_points || []).join(', ') || 'Chưa mô tả'}</p>
+                    <p><strong>Khuyến nghị:</strong> ${classification.recommendations || 'Ngừng tương tác, báo cáo tới SafeNet.'}</p>
+                `;
+            }
+            return `
+                <h4>✅ Chưa có dấu hiệu lừa đảo</h4>
+                <p>${classification.why_not_scam || 'Cuộc trò chuyện có vẻ bình thường.'}</p>
+                <p><strong>Lưu ý:</strong> Luôn cảnh giác và cung cấp thêm dữ liệu nếu có dấu hiệu bất thường.</p>
+            `;
+        };
+
+        // Report forms
+        const reportForms = document.getElementById('reportForms');
+        const reportTabs = document.querySelectorAll('#reportTabs .tab');
+        let reportMode = 'phone';
+
+        const renderReportForm = () => {
+            if (reportMode === 'phone') {
+                reportForms.innerHTML = `
+                    <label>Số điện thoại nghi ngờ *</label>
+                    <input type="text" id="reportPhone" placeholder="Nhập số điện thoại" />
+                    <label>JWT token (nếu bạn có quyền admin)</label>
+                    <input type="password" id="reportPhoneToken" placeholder="Bearer token" />
+                    <button class="submit-btn" id="reportPhoneSubmit">Gửi báo cáo SĐT</button>
+                    <div class="lookup-result" id="reportPhoneStatus"></div>
+                `;
+                document
+                    .getElementById('reportPhoneSubmit')
+                    .addEventListener('click', async () => {
+                        const phone = document.getElementById('reportPhone').value.trim();
+                        const token = document.getElementById('reportPhoneToken').value.trim();
+                        const status = document.getElementById('reportPhoneStatus');
+                        status.classList.add('visible');
+                        if (!phone) {
+                            status.innerHTML = '<h4>Vui lòng nhập SĐT.</h4>';
+                            return;
+                        }
+                        try {
+                            const response = await fetch('/api/v1/reported_phones', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                                },
+                                body: JSON.stringify({ value: phone }),
+                            });
+                            if (!response.ok) throw new Error('Bạn cần token hợp lệ để gửi báo cáo.');
+                            status.innerHTML = '<h4>Đã ghi nhận báo cáo SĐT.</h4>';
+                        } catch (error) {
+                            status.innerHTML = `<h4>Lỗi</h4><p>${error.message}</p>`;
+                        }
+                    });
+            } else {
+                reportForms.innerHTML = `
+                    <label>Đường dẫn nghi ngờ *</label>
+                    <input type="text" id="reportUrl" placeholder="Nhập URL" />
+                    <label>Mô tả ngắn</label>
+                    <textarea id="reportUrlDesc" placeholder="Nội dung, lý do bạn nghi ngờ..."></textarea>
+                    <label>JWT token (yêu cầu quyền admin để thêm vào whitelist)</label>
+                    <input type="password" id="reportUrlToken" placeholder="Bearer token" />
+                    <select id="reportUrlMatch">
+                        <option value="exact">exact – khớp chính xác</option>
+                        <option value="prefix">prefix – bắt đầu bằng</option>
+                        <option value="wildcard">wildcard – chứa pattern</option>
+                    </select>
+                    <button class="submit-btn" id="reportUrlSubmit">Gửi báo cáo URL</button>
+                    <div class="lookup-result" id="reportUrlStatus"></div>
+                `;
+                document
+                    .getElementById('reportUrlSubmit')
+                    .addEventListener('click', async () => {
+                        const value = document.getElementById('reportUrl').value.trim();
+                        const description = document.getElementById('reportUrlDesc').value.trim();
+                        const matchType = document.getElementById('reportUrlMatch').value;
+                        const token = document.getElementById('reportUrlToken').value.trim();
+                        const status = document.getElementById('reportUrlStatus');
+                        status.classList.add('visible');
+                        if (!value) {
+                            status.innerHTML = '<h4>Vui lòng nhập URL.</h4>';
+                            return;
+                        }
+                        try {
+                            const response = await fetch('/api/v1/whitelist/urls', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                                },
+                                body: JSON.stringify({
+                                    value,
+                                    match_type: matchType,
+                                    description,
+                                    source: 'user-report',
+                                    is_active: false,
+                                }),
+                            });
+                            if (!response.ok) throw new Error('Bạn cần token admin để gửi báo cáo URL.');
+                            status.innerHTML =
+                                '<h4>Đã chuyển URL vào hàng đợi kiểm duyệt.</h4><p>Cảm ơn bạn!</p>';
+                        } catch (error) {
+                            status.innerHTML = `<h4>Lỗi</h4><p>${error.message}</p>`;
+                        }
+                    });
+            }
+        };
+
+        reportTabs.forEach((tab) =>
+            tab.addEventListener('click', () => {
+                reportMode = tab.dataset.reportMode;
+                reportTabs.forEach((t) => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderReportForm();
+            })
+        );
+
+        renderReportForm();
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
