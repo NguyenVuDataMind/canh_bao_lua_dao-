@@ -213,6 +213,40 @@
             color: var(--text-muted);
         }
 
+        .lesson-summary ul {
+            margin: 12px 0 0;
+            padding-left: 20px;
+            color: var(--text-muted);
+        }
+
+        .lesson-highlight {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: rgba(0, 193, 106, 0.12);
+            border: 1px solid rgba(0, 193, 106, 0.3);
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .lesson-checklist {
+            margin-top: 18px;
+        }
+
+        .lesson-checklist h5 {
+            margin: 0 0 6px;
+            color: var(--text);
+            font-size: 15px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .lesson-checklist ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-muted);
+        }
+
         .coming-soon {
             text-align: center;
             padding: 80px 20px;
@@ -226,10 +260,11 @@
         }
 
         .lesson-media {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 24px;
             align-items: stretch;
+            width: 100%;
         }
 
         .video-panel {
@@ -240,11 +275,23 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             min-height: 0;
             aspect-ratio: 16 / 9;
+            flex: 1 1 320px;
+            max-width: 100%;
         }
 
         .video-panel iframe {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
+            border: 0;
+            border-radius: 24px;
+            display: block;
+        }
+
+        .lesson-summary {
+            flex: 1 1 320px;
+            max-width: 100%;
         }
 
         .video-overlay {
@@ -509,28 +556,279 @@
                 subtitle: 'Nhận diện rủi ro mạng xã hội',
                 lessons: [
                     { id: 'cm1-b1', title: 'Bài 1 · Những rủi ro phổ biến', status: 'available' },
-                    { id: 'cm1-b2', title: 'Bài 2 · Sẽ sớm cập nhật', status: 'upcoming' },
-                    { id: 'cm1-b3', title: 'Bài 3 · Sẽ sớm cập nhật', status: 'upcoming' },
+                    { id: 'cm1-b2', title: 'Bài 2 · Thủ đoạn khai thác tâm lý', status: 'available' },
                 ],
             },
             {
                 id: 'module-2',
                 title: 'Chuyên mục 2',
-                subtitle: 'Bảo vệ tài khoản ngân hàng',
+                subtitle: 'Quản lý mật khẩu & xác thực 2FA',
                 lessons: [
-                    { id: 'cm2-b1', title: 'Bài 1 · Đang phát triển', status: 'upcoming' },
-                    { id: 'cm2-b2', title: 'Bài 2 · Đang phát triển', status: 'upcoming' },
+                    { id: 'cm2-b1', title: 'Bài học sẽ sớm cập nhật', status: 'upcoming' },
                 ],
             },
             {
                 id: 'module-3',
                 title: 'Chuyên mục 3',
-                subtitle: 'Kỹ năng báo cáo & tố giác',
+                subtitle: 'Nhận diện lừa đảo “Phishing” thế hệ mới (Advanced Phishing)',
                 lessons: [
-                    { id: 'cm3-b1', title: 'Bài 1 · Lên kế hoạch', status: 'upcoming' },
+                    { id: 'cm3-b1', title: 'Bài học sẽ sớm cập nhật', status: 'upcoming' },
                 ],
             },
         ];
+
+        const lessonContent = {
+            'cm1-b1': {
+                videoId: 'axLuBnzS8UQ',
+                summary: {
+                    title: 'Bạn sẽ học gì?',
+                    description:
+                        'Nhận diện nhanh các chiêu trò lừa đảo lan truyền trên mạng xã hội, cách đọc dấu hiệu bất thường trong tin nhắn và cách phản hồi an toàn. Hãy lật từng thẻ kiến thức bên dưới để xem mô tả, ví dụ thực tế và hậu quả tiềm ẩn.',
+                },
+                cards: [
+                    {
+                        section: 'Rủi ro thường gặp',
+                        title: 'Lộ thông tin cá nhân',
+                        intro: 'Khoe ảnh CCCD, thẻ sinh viên, lịch học khiến thông tin bị thu thập.',
+                        description: 'Đăng ảnh giấy tờ, check-in tại nhà/trường, công khai số điện thoại.',
+                        consequence: 'Kẻ gian giả mạo danh tính, chiếm tài khoản, vay tín dụng hoặc doxxing.',
+                        icon: '🛂',
+                    },
+                    {
+                        section: 'Rủi ro thường gặp',
+                        title: 'Lừa đảo mạo danh',
+                        intro: 'Tin nhắn kiểu “tài khoản bị khóa”, “anh đang cần tiền gấp”.',
+                        description: 'Giả danh ngân hàng, người thân, cơ quan chức năng để xin OTP hoặc tiền.',
+                        consequence: 'Mất tài khoản, mất tiền, bị chiếm quyền kiểm soát dịch vụ thanh toán.',
+                        icon: '🎭',
+                    },
+                    {
+                        section: 'Rủi ro thường gặp',
+                        title: 'Theo dõi & quấy rối',
+                        intro: 'Lộ lịch trình sinh hoạt qua check-in liên tục.',
+                        description: 'Đăng vị trí, giờ đi học, đi chơi khiến người lạ dễ bám theo.',
+                        consequence: 'Mất an toàn cá nhân, bị rình rập hoặc tấn công ngoài đời thực.',
+                        icon: '👁️',
+                    },
+                    {
+                        section: 'Rủi ro thường gặp',
+                        title: 'Bắt nạt/bóc phốt',
+                        intro: 'Các cuộc tấn công bằng lời nói trên mạng.',
+                        description: 'Body shaming, tung tin sai, bóc phốt để làm nhục.',
+                        consequence: 'Ảnh hưởng tinh thần, stress, trầm cảm, ngại tương tác.',
+                        icon: '⚡',
+                    },
+                    {
+                        section: 'Rủi ro thường gặp',
+                        title: 'Tin giả & thao túng',
+                        intro: 'Nội dung giật gân, đầu tư coin, trúng thưởng.',
+                        description: 'Đẩy tin thất thiệt, dụ người dùng đầu tư hoặc chuyển tiền.',
+                        consequence: 'Mất tiền, lan truyền thông tin sai, ảnh hưởng uy tín cá nhân.',
+                        icon: '📰',
+                    },
+                    {
+                        section: 'Rủi ro thường gặp',
+                        title: 'Gặp gỡ người lạ',
+                        intro: 'Hẹn gặp qua app nhưng thiếu xác minh.',
+                        description: 'Được rủ ra ngoài tới nơi vắng vẻ, không có bạn đi cùng.',
+                        consequence: 'Nguy cơ bị lợi dụng, lừa đảo hoặc tấn công.',
+                        icon: '📍',
+                    },
+                ],
+                quiz: [
+                    {
+                        question:
+                            'Khi bạn đăng ảnh căn cước công dân hoặc chia sẻ thông tin cá nhân trên mạng xã hội, rủi ro lớn nhất là gì?',
+                        options: [
+                            'Tăng tương tác và được nhiều người biết đến hơn.',
+                            'Bị người khác đánh cắp thông tin, giả mạo danh tính.',
+                            'Không có rủi ro gì nếu để chế độ riêng tư.',
+                        ],
+                        answer: 1,
+                    },
+                    {
+                        question: 'Vì sao không nên check-in vị trí thật của mình?',
+                        options: [
+                            'Vì sẽ làm phiền bạn bè.',
+                            'Bị nghĩ là khoe mẽ.',
+                            'Kẻ xấu có thể theo dõi hoặc lợi dụng thông tin.',
+                        ],
+                        answer: 2,
+                    },
+                    {
+                        question: 'Một bình luận tiêu cực trên mạng có thể gây hậu quả nào?',
+                        options: [
+                            'Làm người khác vui hơn.',
+                            'Không có ảnh hưởng gì.',
+                            'Khiến người bị nhắm đến tổn thương tâm lý.',
+                        ],
+                        answer: 2,
+                    },
+                ],
+            },
+            'cm1-b2': {
+                videoId: '5pKDy5UMvDc',
+                summary: {
+                    title: 'Bài 2 · Thủ đoạn khai thác tâm lý người dùng',
+                    description:
+                        'VTV24 cảnh báo thủ đoạn dựng fanpage giả và lồng ghép video “giải cứu tiền treo” để thao túng cảm xúc người dùng.',
+                },
+                objectivesTitle: 'Mục tiêu khi xem video',
+                objectives: [
+                    'Nhận biết được thủ đoạn lừa đảo dựa vào yếu tố tâm lý.',
+                    'Biết được các hình thức tấn công phổ biến trên mạng xã hội.',
+                    'Hiểu tầm quan trọng của việc bảo vệ thông tin cá nhân và cảm xúc của bản thân khi tương tác trực tuyến.',
+                ],
+                cards: [
+                    {
+                        section: 'Tâm lý bị khai thác',
+                        title: 'Cô đơn – cần được quan tâm',
+                        intro: 'Kẻ gian giả làm người bạn tâm lý.',
+                        description: 'Dễ tin người lạ tỏ ra quan tâm, thấu hiểu và chịu lắng nghe.',
+                        consequence: 'Ví dụ: “Bạn mạng” nhắn tin mỗi ngày, xin ảnh riêng tư rồi tống tiền.',
+                        icon: '🤝',
+                    },
+                    {
+                        section: 'Tâm lý bị khai thác',
+                        title: 'Thích được khen, được chú ý',
+                        intro: 'Những lời mời gọi “nổi tiếng”.',
+                        description: 'Bị cuốn vào lời khen, lời mời thi online, showbiz để lấy thông tin.',
+                        consequence: 'Kẻ xấu yêu cầu gửi ảnh/video hoặc phí “xác minh”, rồi chiếm đoạt dữ liệu.',
+                        icon: '✨',
+                    },
+                    {
+                        section: 'Tâm lý bị khai thác',
+                        title: 'Tin tưởng người “tử tế/giàu có”',
+                        intro: 'Hình ảnh hoàn hảo đánh vào lòng tin.',
+                        description: 'Kẻ lừa đảo tạo profile sang chảnh, tử tế để tạo uy tín.',
+                        consequence: 'Trang cá nhân lung linh nhưng là giả; mục tiêu là nhắn riêng xin tiền.',
+                        icon: '🕴️',
+                    },
+                    {
+                        section: 'Tâm lý bị khai thác',
+                        title: 'Ngại từ chối – sợ bị đánh giá',
+                        intro: 'Ép cảm xúc khiến nạn nhân khó nói “không”.',
+                        description: 'Nhiều người sợ bị chê trách nên làm theo yêu cầu bất thường.',
+                        consequence: 'Ví dụ: “Nếu bạn thật sự tin mình, gửi thêm chút tiền nhé”.',
+                        icon: '😰',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Fake Profile',
+                        intro: 'Tài khoản giả nhưng trông đáng tin.',
+                        description: 'Dùng ảnh/thông tin người khác tạo tài khoản “đẹp”, “chuyên nghiệp”.',
+                        consequence: 'Mất tài khoản, bị giả mạo danh tính, lừa đảo tình cảm.',
+                        icon: '🎭',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Sextortion',
+                        intro: 'Gạ gửi ảnh nhạy cảm.',
+                        description: 'Lợi dụng hình ảnh riêng tư rồi dọa tung lên mạng để tống tiền.',
+                        consequence: 'Bị tống tiền, trầm cảm, tổn hại danh dự.',
+                        icon: '📵',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Sugar Daddy/Mommy Scam',
+                        intro: 'Hứa chu cấp nhưng cần “ảnh riêng”',
+                        description: 'Dụ cung cấp ảnh hoặc đóng “phí xác minh”.',
+                        consequence: 'Mất tiền, bị đe dọa lan truyền hình ảnh.',
+                        icon: '💸',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Catfishing dài hạn',
+                        intro: 'Xây dựng mối quan hệ sâu sắc.',
+                        description: 'Giả danh lâu dài để điều khiển cảm xúc nạn nhân.',
+                        consequence: 'Mất niềm tin, rối loạn tâm lý, phụ thuộc tình cảm.',
+                        icon: '🐟',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Link độc / Phishing',
+                        intro: 'Link giả mạo thương hiệu quen thuộc.',
+                        description: 'Gửi link ngân hàng, Facebook, cơ quan để dụ đăng nhập.',
+                        consequence: 'Mất tài khoản, lộ thông tin cá nhân, mất tiền.',
+                        icon: '🔗',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Giả danh tổ chức uy tín',
+                        intro: 'Mạo danh ngân hàng, công an, trường học.',
+                        description: 'Gọi/nhắn để yêu cầu chuyển tiền, cung cấp dữ liệu.',
+                        consequence: 'Bị lừa chuyển tiền, mất dữ liệu nhạy cảm.',
+                        icon: '🏛️',
+                    },
+                    {
+                        section: 'Chiêu thức phổ biến',
+                        title: 'Chiêu “trúng thưởng”, “cơ hội đầu tư”',
+                        intro: 'Lời mời lợi nhuận khủng.',
+                        description: 'Gửi tin nhắn/cuộc gọi quảng cáo đầu tư siêu lời.',
+                        consequence: 'Mất tiền, bị đánh cắp thông tin ngân hàng.',
+                        icon: '🎁',
+                    },
+                ],
+                cardMetaLabels: [
+                    'Khái quát tâm lý/chiêu trò',
+                    'Cách thức hoạt động',
+                    'Ví dụ hoặc hậu quả',
+                ],
+                checklists: [],
+                quiz: [
+                    {
+                        question: 'Tội phạm mạng thường khai thác yếu tố nào dưới đây?',
+                        options: [
+                            'Kiến thức công nghệ của người dùng.',
+                            'Thói quen ăn uống.',
+                            'Tâm lý và cảm xúc của người dùng.',
+                            'Màu sắc yêu thích.',
+                        ],
+                        answer: 2,
+                    },
+                    {
+                        question: '“Fake profile” là gì?',
+                        options: [
+                            'Tài khoản thật nhưng bị lỗi hiển thị.',
+                            'Tài khoản giả mạo, dùng hình ảnh và thông tin của người khác.',
+                            'Trang fanpage chính thức.',
+                            'Tài khoản bị khóa.',
+                        ],
+                        answer: 1,
+                    },
+                    {
+                        question: 'Thói quen nào sau đây giúp bảo vệ quyền riêng tư tốt nhất trên mạng xã hội?',
+                        options: [
+                            'Để trang cá nhân ở chế độ công khai cho “nhiều người xem cho vui”.',
+                            'Chia sẻ lịch trình hằng ngày để gia tăng tương tác.',
+                            'Đặt chế độ riêng tư (Private/Friend Only) và hạn chế người lạ xem thông tin.',
+                            'Đăng thật nhiều ảnh để xây dựng hình ảnh cá nhân.',
+                        ],
+                        answer: 2,
+                    },
+                    {
+                        question: 'Dấu hiệu đáng ngờ của một tài khoản lừa đảo là gì?',
+                        options: [
+                            'Có ảnh đại diện đẹp, nói chuyện thân mật.',
+                            'Mới tạo tài khoản, hỏi nhiều về đời tư, gửi link lạ.',
+                            'Đăng bài thường xuyên.',
+                            'Có nhiều người theo dõi.',
+                        ],
+                        answer: 1,
+                    },
+                    {
+                        question: 'Cách phòng tránh sextortion hiệu quả nhất là:',
+                        options: [
+                            'Không kết bạn với ai trên mạng.',
+                            'Cài phần mềm diệt virus.',
+                            'Không gửi hoặc chia sẻ ảnh nhạy cảm dù chỉ cho người quen.',
+                            'Tắt mạng xã hội.',
+                        ],
+                        answer: 2,
+                    },
+                ],
+        },
+        };
 
         const categoryTabs = document.getElementById('categoryTabs');
         const lessonList = document.getElementById('lessonList');
@@ -580,6 +878,30 @@
         const renderLessonDetail = () => {
             const activeCategory = lessonData.find((cat) => cat.id === currentCategory);
             const activeLesson = activeCategory.lessons.find((lesson) => lesson.id === currentLesson);
+            const lessonConfig = lessonContent[currentLesson] || {};
+            const buildListBlock = (title, items = []) =>
+                !items.length
+                    ? ''
+                    : `
+                        <div class="lesson-checklist">
+                            <h5>${title}</h5>
+                            <ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                    `;
+            const summaryDescriptionDefault =
+                'Bài học hiện chưa có mô tả chi tiết. Nội dung sẽ được cập nhật sớm.';
+            const summaryTitle = lessonConfig.summary?.title || 'Bạn sẽ học gì?';
+            const summaryDescription = lessonConfig.summary?.description || summaryDescriptionDefault;
+            const highlightHtml = lessonConfig.highlight
+                ? `<div class="lesson-highlight">${lessonConfig.highlight}</div>`
+                : '';
+            const objectivesTitle = lessonConfig.objectivesTitle || 'Mục tiêu bài học';
+            const objectivesHtml = lessonConfig.objectives
+                ? buildListBlock(objectivesTitle, lessonConfig.objectives)
+                : '';
+            const checklistHtml = lessonConfig.checklists
+                ? lessonConfig.checklists.map((list) => buildListBlock(list.title, list.items)).join('')
+                : '';
 
             if (!activeLesson || activeLesson.status !== 'available') {
                 lessonDetail.innerHTML = `
@@ -607,12 +929,11 @@
                         </div>
                     </div>
                     <div class="lesson-summary">
-                        <h4 style="margin-top:0;">Bạn sẽ học gì?</h4>
-                        <p>
-                            Nhận diện nhanh các chiêu trò lừa đảo lan truyền trên mạng xã hội, cách đọc dấu hiệu bất thường
-                            trong tin nhắn và cách phản hồi an toàn. Hãy lật từng thẻ kiến thức bên dưới để xem mô tả, ví dụ
-                            thực tế và hậu quả tiềm ẩn.
-                        </p>
+                        <h4 style="margin-top:0;">${summaryTitle}</h4>
+                        <p>${summaryDescription}</p>
+                        ${highlightHtml}
+                        ${objectivesHtml}
+                        ${checklistHtml}
                     </div>
                 </div>
                 <div class="knowledge-panel">
@@ -642,11 +963,11 @@
                 </div>
             `;
 
-            setupLessonInteractive();
+            setupLessonInteractive(lessonConfig);
         };
 
-        const setupLessonInteractive = () => {
-            const youtubeId = 'axLuBnzS8UQ';
+        const setupLessonInteractive = (config = {}) => {
+            const youtubeId = config.videoId || 'axLuBnzS8UQ';
             const videoContainer = document.getElementById('lessonVideo');
             const playButton = document.getElementById('lessonPlay');
             const overlay = videoContainer.querySelector('.video-overlay');
@@ -662,47 +983,19 @@
                 iframe.allowFullscreen = true;
                 videoContainer.appendChild(iframe);
             };
-            playButton.addEventListener('click', loadVideo);
-            overlay.addEventListener('click', loadVideo);
 
-            const risks = [
-                {
-                    title: 'Lộ thông tin cá nhân',
-                    description: 'Đăng ảnh CCCD, thẻ sinh viên, check-in tại nhà/trường, công khai số điện thoại.',
-                    consequence: 'Dễ bị kẻ gian thu thập để mạo danh, chiếm đoạt tài khoản, vay tín dụng, bị "doxxing".',
-                    icon: '🛂',
-                },
-                {
-                    title: 'Lừa đảo mạo danh',
-                    description: 'Tin nhắn "Tài khoản bị khóa, gửi mã OTP"; "Anh đang cần tiền gấp chuyển giúp".',
-                    consequence: 'Mất tài khoản, mất tiền, bị chiếm đoạt dịch vụ thanh toán.',
-                    icon: '🎭',
-                },
-                {
-                    title: 'Theo dõi & quấy rối',
-                    description: 'Check-in nơi học, giờ đi chơi; bị người lạ bám theo, nhắn tin làm phiền.',
-                    consequence: 'Mất an toàn cá nhân, bị rình rập hoặc tấn công ngoài đời thực.',
-                    icon: '👁️',
-                },
-                {
-                    title: 'Bắt nạt mạng',
-                    description: 'Bình luận body shaming, bóc phốt, tung tin sai về bạn.',
-                    consequence: 'Ảnh hưởng tinh thần, trầm cảm, sợ hãi khi lên mạng.',
-                    icon: '⚡',
-                },
-                {
-                    title: 'Tin giả & thao túng thông tin',
-                    description: 'Tin nội dung giật gân, đầu tư coin, "trúng thưởng", dễ bị dắt mũi.',
-                    consequence: 'Bị lừa tiền, lan truyền thông tin sai lệch, ảnh hưởng uy tín cá nhân.',
-                    icon: '📰',
-                },
-                {
-                    title: 'Gặp gỡ người lạ',
-                    description: 'Kết bạn qua ứng dụng hẹn hò, được rủ gặp tại nơi vắng vẻ.',
-                    consequence: 'Nguy cơ bị lợi dụng, lừa đảo, thậm chí tấn công.',
-                    icon: '📍',
-                },
-            ];
+            if (playButton && overlay) {
+                playButton.addEventListener('click', loadVideo);
+                overlay.addEventListener('click', loadVideo);
+            }
+
+            const cards = config.cards || [];
+            const cardMetaLabels =
+                config.cardMetaLabels || [
+                    'BƯỚC 1 · Khái quát nội dung',
+                    'BƯỚC 2 · Cách thức/cách tiếp cận',
+                    'BƯỚC 3 · Ví dụ hoặc hậu quả',
+                ];
 
             const riskTabs = document.getElementById('riskTabs');
             const riskCard = document.getElementById('riskCard');
@@ -714,25 +1007,25 @@
             const riskIconBack = document.getElementById('riskIconBack');
             const riskTitleBack = document.getElementById('riskTitleBack');
             const riskContentBack = document.getElementById('riskContentBack');
+            const riskWrapper = document.querySelector('.risk-card-wrapper');
 
             let currentRisk = 0;
             let cardState = 0;
-            const metaLabels = [
-                'BƯỚC 1 · Nhấp để xem mô tả chi tiết',
-                'BƯỚC 2 · Mô tả & ví dụ thực tế',
-                'BƯỚC 3 · Hậu quả tiềm ẩn',
-            ];
 
             const renderRiskTabs = () => {
+                if (!riskTabs) return;
                 riskTabs.innerHTML = '';
-                risks.forEach((risk, index) => {
+                cards.forEach((risk, index) => {
                     const btn = document.createElement('button');
                     btn.className = `risk-tab ${index === currentRisk ? 'active' : ''}`;
-                    btn.textContent = `Rủi ro ${index + 1}`;
+                    const label = risk.section ? `${risk.section} · ${risk.title}` : `Chủ đề ${index + 1}`;
+                    btn.textContent = label;
                     btn.addEventListener('click', () => {
                         currentRisk = index;
                         cardState = 0;
-                        riskCard.classList.remove('flipped');
+                        if (riskCard) {
+                            riskCard.classList.remove('flipped');
+                        }
                         renderRiskCard();
                         renderRiskTabs();
                     });
@@ -741,88 +1034,85 @@
             };
 
             const renderRiskCard = () => {
-                const risk = risks[currentRisk];
-                
-                // Front side
-                riskMeta.textContent = metaLabels[cardState];
-                riskIcon.textContent = risk.icon;
-                riskTitle.textContent = risk.title;
+                if (!cards.length || !riskCard) return;
+                const risk = cards[currentRisk];
+                const introText =
+                    risk.intro || 'Chạm vào thẻ để xem mô tả và ví dụ thực tế cho nội dung này.';
+
+                const metaLabel = cardMetaLabels[cardState] || '';
+                riskMeta.textContent = `${risk.section || 'Chủ đề'} · ${metaLabel}`;
+                riskIcon.textContent = risk.icon || '🛡️';
+                riskTitle.textContent = risk.title || 'Đang cập nhật';
                 if (cardState === 0) {
-                    riskContent.textContent = 'Chạm vào thẻ để xem mô tả và ví dụ thực tế cho rủi ro này.';
+                    riskContent.textContent = introText;
                 } else if (cardState === 1) {
-                    riskContent.textContent = risk.description;
+                    riskContent.textContent = risk.description || 'Đang cập nhật mô tả.';
                 } else {
-                    riskContent.textContent = risk.consequence;
+                    riskContent.textContent = risk.consequence || 'Đang cập nhật ví dụ/hậu quả.';
                 }
-                
-                // Back side - hiển thị nội dung tiếp theo
+
                 const nextState = (cardState + 1) % 3;
-                riskMetaBack.textContent = metaLabels[nextState];
-                riskIconBack.textContent = risk.icon;
-                riskTitleBack.textContent = risk.title;
+                const nextMetaLabel = cardMetaLabels[nextState] || '';
+                riskMetaBack.textContent = `${risk.section || 'Chủ đề'} · ${nextMetaLabel}`;
+                riskIconBack.textContent = risk.icon || '🛡️';
+                riskTitleBack.textContent = risk.title || 'Đang cập nhật';
                 if (nextState === 0) {
-                    riskContentBack.textContent = 'Chạm vào thẻ để xem mô tả và ví dụ thực tế cho rủi ro này.';
+                    riskContentBack.textContent = introText;
                 } else if (nextState === 1) {
-                    riskContentBack.textContent = risk.description;
+                    riskContentBack.textContent = risk.description || 'Đang cập nhật mô tả.';
                 } else {
-                    riskContentBack.textContent = risk.consequence;
+                    riskContentBack.textContent = risk.consequence || 'Đang cập nhật ví dụ/hậu quả.';
                 }
             };
 
-            riskCard.addEventListener('click', () => {
-                // Thêm class flipped để trigger animation
-                riskCard.classList.add('flipped');
-                
-                // Sau khi animation hoàn thành một nửa, cập nhật state và reset
-                setTimeout(() => {
-                    cardState = (cardState + 1) % 3;
-                    renderRiskCard();
-                    riskCard.classList.remove('flipped');
-                }, 300); // Nửa thời gian animation (0.6s / 2)
-            });
+            if (!cards.length) {
+                if (riskTabs) {
+                    riskTabs.innerHTML =
+                        '<p style="margin:0;color:var(--text-muted);">Nội dung sẽ sớm được cập nhật.</p>';
+                }
+                if (riskWrapper) {
+                    riskWrapper.style.display = 'none';
+                }
+            } else {
+                if (riskWrapper) {
+                    riskWrapper.style.display = 'block';
+                }
+                renderRiskTabs();
+                renderRiskCard();
+                if (riskCard) {
+                    riskCard.addEventListener('click', () => {
+                        riskCard.classList.add('flipped');
+                        setTimeout(() => {
+                            cardState = (cardState + 1) % 3;
+                            renderRiskCard();
+                            riskCard.classList.remove('flipped');
+                        }, 300);
+                    });
+                }
+            }
 
-            renderRiskTabs();
-            renderRiskCard();
-
-            const quiz = [
-                {
-                    question:
-                        'Khi bạn đăng ảnh căn cước công dân hoặc chia sẻ thông tin cá nhân trên mạng xã hội, rủi ro lớn nhất là gì?',
-                    options: [
-                        'Tăng tương tác và được nhiều người biết đến hơn.',
-                        'Bị người khác đánh cắp thông tin, giả mạo danh tính.',
-                        'Không có rủi ro gì nếu để chế độ riêng tư.',
-                    ],
-                    answer: 1,
-                },
-                {
-                    question: 'Vì sao không nên check-in vị trí thật của mình?',
-                    options: [
-                        'Vì sẽ làm phiền bạn bè.',
-                        'Bị nghĩ là khoe mẽ.',
-                        'Kẻ xấu có thể theo dõi hoặc lợi dụng thông tin.',
-                    ],
-                    answer: 2,
-                },
-                {
-                    question: 'Một bình luận tiêu cực trên mạng có thể gây hậu quả nào?',
-                    options: [
-                        'Làm người khác vui hơn.',
-                        'Không có ảnh hưởng gì.',
-                        'Khiến người bị nhắm đến tổn thương tâm lý.',
-                    ],
-                    answer: 2,
-                },
-            ];
-
+            const quiz = Array.isArray(config.quiz) ? config.quiz : [];
             const questionSteps = document.getElementById('questionSteps');
             const questionText = document.getElementById('questionText');
             const optionsContainer = document.getElementById('optionsContainer');
             const answerStatus = document.getElementById('answerStatus');
+
+            if (!quiz.length) {
+                if (questionSteps) questionSteps.innerHTML = '';
+                if (questionText) questionText.textContent = 'Chưa có câu hỏi kiểm tra cho bài học này.';
+                if (optionsContainer) optionsContainer.innerHTML = '';
+                if (answerStatus) {
+                    answerStatus.textContent = 'Nội dung quiz sẽ sớm được bổ sung.';
+                    answerStatus.className = 'answer-status';
+                }
+                return;
+            }
+
             let currentQuestion = 0;
             const answered = Array(quiz.length).fill(false);
 
             const renderSteps = () => {
+                if (!questionSteps) return;
                 questionSteps.innerHTML = '';
                 quiz.forEach((_, idx) => {
                     const btn = document.createElement('button');
@@ -839,12 +1129,16 @@
 
             const renderQuestion = () => {
                 const data = quiz[currentQuestion];
-                questionText.textContent = `Câu ${currentQuestion + 1}: ${data.question}`;
-                optionsContainer.innerHTML = '';
-                answerStatus.textContent = answered[currentQuestion]
-                    ? 'Bạn đã trả lời câu này.'
-                    : 'Chọn đáp án mà bạn nghĩ chính xác.';
-                answerStatus.className = 'answer-status';
+                if (questionText) {
+                    questionText.textContent = `Câu ${currentQuestion + 1}: ${data.question}`;
+                }
+                if (optionsContainer) optionsContainer.innerHTML = '';
+                if (answerStatus) {
+                    answerStatus.textContent = answered[currentQuestion]
+                        ? 'Bạn đã trả lời câu này.'
+                        : 'Chọn đáp án mà bạn nghĩ chính xác.';
+                    answerStatus.className = 'answer-status';
+                }
 
                 data.options.forEach((option, idx) => {
                     const btn = document.createElement('button');
@@ -857,23 +1151,29 @@
                         answered[currentQuestion] = true;
                         const isCorrect = idx === data.answer;
                         btn.classList.add(isCorrect ? 'correct' : 'incorrect');
-                        answerStatus.textContent = isCorrect
-                            ? 'Chính xác! Bạn đã nắm được kiến thức.'
-                            : 'Chưa chính xác. Đáp án đúng đã được tô sáng.';
-                        answerStatus.classList.add(isCorrect ? 'correct' : 'incorrect');
+                        if (answerStatus) {
+                            answerStatus.textContent = isCorrect
+                                ? 'Chính xác! Bạn đã nắm được kiến thức.'
+                                : 'Chưa chính xác. Đáp án đúng đã được tô sáng.';
+                            answerStatus.classList.add(isCorrect ? 'correct' : 'incorrect');
+                        }
 
-                        Array.from(optionsContainer.children).forEach((child, optionIndex) => {
-                            child.classList.add('disabled');
-                            child.disabled = true;
-                            if (optionIndex === data.answer) {
-                                child.classList.add('correct');
-                            }
-                            if (optionIndex !== data.answer && child !== btn) {
-                                child.classList.add('incorrect');
-                            }
-                        });
+                        if (optionsContainer) {
+                            Array.from(optionsContainer.children).forEach((child, optionIndex) => {
+                                child.classList.add('disabled');
+                                child.disabled = true;
+                                if (optionIndex === data.answer) {
+                                    child.classList.add('correct');
+                                }
+                                if (optionIndex !== data.answer && child !== btn) {
+                                    child.classList.add('incorrect');
+                                }
+                            });
+                        }
                     });
-                    optionsContainer.appendChild(btn);
+                    if (optionsContainer) {
+                        optionsContainer.appendChild(btn);
+                    }
                 });
             };
 
