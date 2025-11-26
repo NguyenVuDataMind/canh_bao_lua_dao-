@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import Optional
-from sqlalchemy.orm import Mapped, mapped_column
+import uuid
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.sqltypes import DateTime, String, Float
 
@@ -20,6 +23,10 @@ class SOSRequest(Base):
     latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     accuracy: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Độ chính xác GPS (mét)
+
+    # User who sent this SOS request
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    user = relationship("User", back_populates="sos_requests")
 
     # Thông tin người dùng (nếu có)
     user_agent: Mapped[Optional[str]] = mapped_column(String, nullable=True)

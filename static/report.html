@@ -195,6 +195,11 @@
             <a href="/index.html" class="back-btn">← Quay lại trang chủ</a>
         </div>
 
+        <!-- Auth check message -->
+        <div id="authCheckMessage" style="display: none; padding: 20px; background: rgba(255, 105, 90, 0.15); border: 1px solid #ff695a; border-radius: 20px; margin-bottom: 20px; text-align: center;">
+            <p>Vui lòng <a href="/index.html" style="color: #00c16a; text-decoration: underline;">đăng nhập</a> để sử dụng chức năng báo cáo.</p>
+        </div>
+
         <div class="panel-card">
             <div class="tabs" id="reportTabs">
                 <button class="tab active" data-report-mode="phone">Báo cáo SĐT</button>
@@ -231,10 +236,16 @@
                             return;
                         }
                         try {
+                            const token = localStorage.getItem('access_token');
+                            if (!token) {
+                                throw new Error('Vui lòng đăng nhập để gửi báo cáo');
+                            }
+
                             const response = await fetch('/api/v1/reports', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`,
                                 },
                                 body: JSON.stringify({
                                     reported_phone: phone,
@@ -274,10 +285,16 @@
                             return;
                         }
                         try {
+                            const token = localStorage.getItem('access_token');
+                            if (!token) {
+                                throw new Error('Vui lòng đăng nhập để gửi báo cáo');
+                            }
+
                             const response = await fetch('/api/v1/reports', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`,
                                 },
                                 body: JSON.stringify({
                                     reported_url: value,
@@ -309,6 +326,19 @@
             })
         );
 
+        // Check auth status on page load
+        function checkAuthStatus() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                document.getElementById('authCheckMessage').style.display = 'block';
+                document.querySelector('.panel-card').style.display = 'none';
+            } else {
+                document.getElementById('authCheckMessage').style.display = 'none';
+                document.querySelector('.panel-card').style.display = 'block';
+            }
+        }
+
+        checkAuthStatus();
         renderReportForm();
     </script>
 </body>

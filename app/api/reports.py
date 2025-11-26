@@ -3,6 +3,7 @@ from sqlalchemy import select
 from typing import Optional
 
 from app.deps.db import CurrentAsyncSession
+from app.deps.users import CurrentUser
 from app.models.report import Report
 from app.models.blacklist_phone import BlackListPhone
 from app.models.blacklist_url import BlackListURL
@@ -16,8 +17,9 @@ router = APIRouter(prefix="/reports", tags=["reports"])
 async def create_report(
     payload: ReportCreate,
     session: CurrentAsyncSession,
+    current_user: CurrentUser,
 ):
-    """Tạo báo cáo URL hoặc SĐT đáng ngờ - không yêu cầu đăng nhập"""
+    """Tạo báo cáo URL hoặc SĐT đáng ngờ - yêu cầu đăng nhập"""
     report = Report(
         reported_url=payload.reported_url,
         reported_phone=payload.reported_phone,
@@ -25,6 +27,7 @@ async def create_report(
         description=payload.description,
         source=payload.source or "user-report",
         status=False,  # Chưa được duyệt
+        user_id=current_user.id,  # Liên kết với user đã đăng nhập
     )
     session.add(report)
     await session.commit()

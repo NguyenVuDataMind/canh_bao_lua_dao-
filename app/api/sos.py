@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.deps.db import CurrentAsyncSession
+from app.deps.users import CurrentUser
 from app.models.sos_request import SOSRequest
 from app.schemas.sos import SOSRequestCreate, SOSRequestOut
 from app.services.mail import send_sos_email
@@ -16,8 +17,9 @@ async def create_sos_request(
     sos_data: SOSRequestCreate,
     request: Request,
     session: CurrentAsyncSession,
+    current_user: CurrentUser,
 ):
-    """Tạo SOS request - gửi vị trí và thông báo admin"""
+    """Tạo SOS request - gửi vị trí và thông báo admin - yêu cầu đăng nhập"""
     
     # Lấy IP và User-Agent
     ip_address = None
@@ -32,7 +34,8 @@ async def create_sos_request(
         accuracy=sos_data.accuracy,
         ip_address=ip_address,
         user_agent=user_agent,
-        status="pending"
+        status="pending",
+        user_id=current_user.id,  # Liên kết với user đã đăng nhập
     )
     
     session.add(sos_request)

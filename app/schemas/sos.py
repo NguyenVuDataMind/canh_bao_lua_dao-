@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
+from uuid import UUID
 
 
 class SOSRequestCreate(BaseModel):
@@ -20,5 +21,6 @@ class SOSRequestOut(BaseModel):
     ip_address: Optional[str] = None
     status: Optional[str] = None
     notes: Optional[str] = None
+    user_id: Optional[UUID] = None
     created: datetime
 

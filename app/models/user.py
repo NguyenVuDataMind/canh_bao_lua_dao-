@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import func
 
 from app.db import Base
@@ -29,6 +29,10 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     last_access_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     risk_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     otp_code: Mapped[str] = mapped_column(nullable=True)
+
+    # Relationships
+    reports = relationship("Report", back_populates="user")
+    sos_requests = relationship("SOSRequest", back_populates="user")
 
     def __repr__(self):
         return f"User(id={self.id!r}, name={self.email!r})"

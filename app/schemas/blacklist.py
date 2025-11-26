@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
+from uuid import UUID
 
 
 class BlackListPhoneCreate(BaseModel):
@@ -55,6 +56,7 @@ class ReportOut(BaseModel):
     description: Optional[str] = None
     source: Optional[str] = None
     status: Optional[bool] = None
+    user_id: Optional[UUID] = None
     created: datetime
     updated: datetime
 

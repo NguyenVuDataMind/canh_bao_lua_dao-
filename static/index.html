@@ -571,6 +571,125 @@
             font-size: 14px;
         }
 
+        .auth-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 12000;
+        }
+
+        .auth-modal.active {
+            display: flex;
+        }
+
+        .auth-card {
+            width: min(420px, 90vw);
+            background: rgba(3, 12, 24, 0.95);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            padding: 28px;
+            color: var(--text);
+            position: relative;
+        }
+
+        .auth-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .auth-tab {
+            padding: 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: #042818;
+            border-color: transparent;
+        }
+
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        .auth-form label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+        }
+
+        .auth-form button {
+            padding: 14px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(120deg, var(--primary), #03e37f);
+            color: #022518;
+        }
+
+        .auth-status {
+            margin-top: 8px;
+            font-size: 14px;
+            border-radius: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: none;
+        }
+
+        .auth-status.visible {
+            display: block;
+        }
+
+        .auth-status.success {
+            border-color: rgba(14, 210, 144, 0.8);
+            color: #0ed290;
+        }
+
+        .auth-status.error {
+            border-color: rgba(255, 112, 112, 0.8);
+            color: #ff8b8b;
+        }
+
         .panel-card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
@@ -988,6 +1107,148 @@
             color: #ff8b8b;
         }
 
+        /* Auth Gate Styles */
+        .auth-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 20%, #07355c, #031525);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .auth-gate-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .brand-large {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            margin-bottom: 16px;
+        }
+
+        .brand-large span {
+            color: var(--primary);
+        }
+
+        .auth-gate-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin: 0 0 8px;
+        }
+
+        .auth-gate-description {
+            color: var(--text-muted);
+            margin: 0 0 32px;
+            font-size: 14px;
+        }
+
+        .auth-gate-tabs {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .auth-gate-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .auth-gate-tab.active {
+            background: var(--primary);
+            color: #042818;
+        }
+
+        .auth-gate-form {
+            display: none;
+            gap: 16px;
+            flex-direction: column;
+        }
+
+        .auth-gate-form.active {
+            display: flex;
+        }
+
+        .auth-gate-form input {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .auth-gate-form input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-gate-form button {
+            padding: 16px;
+            background: var(--primary);
+            color: #042818;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-gate-form button:hover {
+            background: #00d97a;
+            transform: translateY(-2px);
+        }
+
+        .auth-gate-status {
+            margin: 16px 0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .auth-gate-status.visible {
+            display: block;
+        }
+
+        .auth-gate-status.success {
+            background: rgba(0, 193, 106, 0.15);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .auth-gate-status.error {
+            background: rgba(255, 105, 90, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
         @media (max-width: 900px) {
             nav.primary-nav {
                 display: none;
@@ -1006,7 +1267,43 @@
     </style>
 </head>
 <body>
-    <div class="hub">
+    <!-- Auth Gate - shown first -->
+    <div class="auth-gate" id="authGate">
+        <div class="auth-gate-content">
+            <div class="brand-large">Safe<span>Net</span> Hub</div>
+            <p class="auth-gate-subtitle">Bảo vệ bạn khỏi lừa đảo trực tuyến</p>
+            <p class="auth-gate-description">Vui lòng đăng nhập hoặc tạo tài khoản để sử dụng SafeNet Hub</p>
+            
+            <div class="auth-gate-tabs">
+                <button class="auth-gate-tab active" data-gate-tab="login">Đăng nhập</button>
+                <button class="auth-gate-tab" data-gate-tab="register">Đăng ký</button>
+            </div>
+
+            <div class="auth-gate-status" id="authGateStatus"></div>
+
+            <form class="auth-gate-form active" id="gateLoginForm">
+                <input type="email" id="gateLoginEmail" required placeholder="Email của bạn" />
+                <input type="password" id="gateLoginPassword" required placeholder="Mật khẩu" />
+                <button type="submit">Đăng nhập</button>
+            </form>
+
+            <form class="auth-gate-form" id="gateRegisterForm">
+                <input type="email" id="gateRegisterEmail" required placeholder="Email của bạn" />
+                <input type="password" id="gateRegisterPassword" required placeholder="Mật khẩu (tối thiểu 8 ký tự)" />
+                <input type="text" id="gateRegisterName" placeholder="Họ tên (tùy chọn)" />
+                <button type="submit">Tạo tài khoản</button>
+            </form>
+
+            <form class="auth-gate-form" id="gateOtpForm" style="display: none;">
+                <p>Chúng tôi đã gửi mã OTP đến email của bạn</p>
+                <input type="email" id="gateOtpEmail" required placeholder="Email đã đăng ký" />
+                <input type="text" id="gateOtpCode" required placeholder="Nhập mã OTP (6 số)" maxlength="6" />
+                <button type="submit">Xác minh</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="hub" id="mainApp" style="display: none;">
         <header class="hero" id="home">
             <div class="nav-bar">
                 <div class="brand">Safe<span>Net</span></div>
@@ -1020,6 +1317,7 @@
                     <a href="/report.html" class="chip" style="text-decoration: none; display: inline-block;">Báo cáo</a>
                     <button type="button" class="chip primary" id="aiBtn">AI tư vấn</button>
                     <button type="button" class="chip sos" id="sosBtn" title="Chức năng đang được phát triển">SOS cầu cứu</button>
+                    <button type="button" class="chip secondary" id="logoutBtn" style="display: none;">Đăng xuất</button>
                     <a href="/admin.html" class="chip admin-btn" style="text-decoration: none; display: inline-block; position: relative; z-index: 1000; pointer-events: auto !important; cursor: pointer !important;">Admin</a>
                 </div>
             </div>
@@ -1068,6 +1366,63 @@
         <footer id="footer">
             © <span id="year"></span> SafeNet · Bảo vệ bạn khỏi những chiêu trò lừa đảo.
         </footer>
+    </div>
+
+    <div class="auth-modal" id="authModal">
+        <div class="auth-card">
+            <button class="auth-close" id="authClose">×</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-auth-tab="register">Đăng ký</button>
+                <button class="auth-tab" data-auth-tab="otp">Xác minh OTP</button>
+                <button class="auth-tab" data-auth-tab="login">Đăng nhập</button>
+            </div>
+
+            <div class="auth-status" id="authStatus"></div>
+
+            <form class="auth-form active" id="registerForm">
+                <div>
+                    <label for="registerEmail">Email *</label>
+                    <input type="email" id="registerEmail" required placeholder="you@example.com" />
+                </div>
+                <div>
+                    <label for="registerPassword">Mật khẩu *</label>
+                    <input type="password" id="registerPassword" required placeholder="Tối thiểu 8 ký tự" />
+                </div>
+                <div>
+                    <label for="registerPhone">Số điện thoại (tùy chọn)</label>
+                    <input type="tel" id="registerPhone" placeholder="+84901234567" />
+                </div>
+                <div>
+                    <label for="registerName">Họ tên (tùy chọn)</label>
+                    <input type="text" id="registerName" placeholder="Nguyễn Văn A" />
+                </div>
+                <button type="submit">Tạo tài khoản</button>
+            </form>
+
+            <form class="auth-form" id="otpForm">
+                <div>
+                    <label for="otpEmail">Email đã đăng ký *</label>
+                    <input type="email" id="otpEmail" required placeholder="you@example.com" />
+                </div>
+                <div>
+                    <label for="otpCode">Mã OTP *</label>
+                    <input type="text" id="otpCode" required placeholder="Nhập 6 số" maxlength="6" />
+                </div>
+                <button type="submit">Xác minh OTP</button>
+            </form>
+
+            <form class="auth-form" id="loginForm">
+                <div>
+                    <label for="loginEmail">Email *</label>
+                    <input type="email" id="loginEmail" required placeholder="you@example.com" />
+                </div>
+                <div>
+                    <label for="loginPassword">Mật khẩu *</label>
+                    <input type="password" id="loginPassword" required placeholder="********" />
+                </div>
+                <button type="submit">Đăng nhập</button>
+            </form>
+        </div>
     </div>
 
     <!-- AI Chat Box Popup -->
@@ -1152,10 +1507,16 @@
                     sosBtn.textContent = '📤 Đang gửi...';
                     
                     // Gửi request lên server
+                    const token = localStorage.getItem('access_token');
+                    if (!token) {
+                        throw new Error('Vui lòng đăng nhập để sử dụng chức năng SOS');
+                    }
+
                     const response = await fetch('/api/v1/sos', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
                         },
                         body: JSON.stringify({
                             latitude,
@@ -1453,6 +1814,123 @@
             `;
         }
 
+        // Auth modal logic
+        const authBtn = document.getElementById('authBtn');
+        const authModal = document.getElementById('authModal');
+        const authClose = document.getElementById('authClose');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const authForms = document.querySelectorAll('.auth-form');
+        const authStatus = document.getElementById('authStatus');
+        const registerForm = document.getElementById('registerForm');
+        const otpForm = document.getElementById('otpForm');
+        const loginForm = document.getElementById('loginForm');
+        const otpEmailInput = document.getElementById('otpEmail');
+
+        const showAuthStatus = (message, type = 'success') => {
+            if (!authStatus) return;
+            authStatus.textContent = message;
+            authStatus.className = `auth-status visible ${type}`;
+        };
+
+        const switchAuthTab = (tab) => {
+            authTabs.forEach((t) => t.classList.toggle('active', t.dataset.authTab === tab));
+            authForms.forEach((form) => form.classList.toggle('active', form.id.startsWith(tab)));
+            if (authStatus) authStatus.className = 'auth-status';
+        };
+
+        if (authBtn) {
+            authBtn.addEventListener('click', () => authModal.classList.add('active'));
+        }
+
+        if (authClose) {
+            authClose.addEventListener('click', () => authModal.classList.remove('active'));
+        }
+
+        if (authModal) {
+            authModal.addEventListener('click', (e) => {
+                if (e.target === authModal) authModal.classList.remove('active');
+            });
+        }
+
+        authTabs.forEach((tab) => {
+            tab.addEventListener('click', () => switchAuthTab(tab.dataset.authTab));
+        });
+
+        if (registerForm) {
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const payload = {
+                    email: document.getElementById('registerEmail').value.trim(),
+                    password: document.getElementById('registerPassword').value,
+                };
+                const phone = document.getElementById('registerPhone').value.trim();
+                const fullName = document.getElementById('registerName').value.trim();
+                if (phone) payload.phone_e164 = phone;
+                if (fullName) payload.full_name = fullName;
+
+                try {
+                    const res = await fetch('/api/v1/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) throw new Error(data.detail || 'Không thể đăng ký');
+                    showAuthStatus('Đăng ký thành công! Kiểm tra email để nhận mã OTP.', 'success');
+                    otpEmailInput.value = payload.email;
+                    switchAuthTab('otp');
+                } catch (error) {
+                    showAuthStatus(error.message, 'error');
+                }
+            });
+        }
+
+        if (otpForm) {
+            otpForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const payload = {
+                    email: document.getElementById('otpEmail').value.trim(),
+                    otp_code: document.getElementById('otpCode').value.trim(),
+                };
+                try {
+                    const res = await fetch('/api/v1/auth/verify-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) throw new Error(data.detail || 'OTP không hợp lệ');
+                    showAuthStatus('Xác minh thành công! Bạn có thể đăng nhập.', 'success');
+                    switchAuthTab('login');
+                } catch (error) {
+                    showAuthStatus(error.message, 'error');
+                }
+            });
+        }
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const params = new URLSearchParams();
+                params.append('username', document.getElementById('loginEmail').value.trim());
+                params.append('password', document.getElementById('loginPassword').value);
+
+                try {
+                    const res = await fetch('/api/v1/auth/jwt/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params,
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) throw new Error(data.detail || 'Đăng nhập thất bại');
+                    localStorage.setItem('safenet_token', data.access_token);
+                    showAuthStatus('Đăng nhập thành công! Token đã được lưu.', 'success');
+                } catch (error) {
+                    showAuthStatus(error.message, 'error');
+                }
+            });
+        }
+
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // Tin tức - tính năng chưa phát triển
@@ -1463,6 +1941,194 @@
                 alert('📰 Tính năng Tin tức sẽ sớm được phát triển. Vui lòng quay lại sau!');
             });
         }
+
+        // Auth Gate Management
+        const authGate = document.getElementById('authGate');
+        const mainApp = document.getElementById('mainApp');
+        const authGateStatus = document.getElementById('authGateStatus');
+        const gateTabs = document.querySelectorAll('.auth-gate-tab');
+        const gateForms = document.querySelectorAll('.auth-gate-form');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Check if user is already logged in
+        function checkAuthStatus() {
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                showMainApp();
+            } else {
+                showAuthGate();
+            }
+        }
+
+        function showAuthGate() {
+            authGate.style.display = 'flex';
+            mainApp.style.display = 'none';
+        }
+
+        function showMainApp() {
+            authGate.style.display = 'none';
+            mainApp.style.display = 'block';
+            if (logoutBtn) {
+                logoutBtn.style.display = 'inline-block';
+            }
+        }
+
+        function showGateStatus(message, isError = false) {
+            authGateStatus.textContent = message;
+            authGateStatus.className = `auth-gate-status visible ${isError ? 'error' : 'success'}`;
+        }
+
+        function hideGateStatus() {
+            authGateStatus.classList.remove('visible');
+        }
+
+        // Gate tab switching
+        gateTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabType = tab.dataset.gateTab;
+                gateTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                gateForms.forEach(form => {
+                    form.classList.remove('active');
+                    if (form.id === `gate${tabType.charAt(0).toUpperCase() + tabType.slice(1)}Form`) {
+                        form.classList.add('active');
+                    }
+                });
+                hideGateStatus();
+            });
+        });
+
+        // Gate login form
+        document.getElementById('gateLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('gateLoginEmail').value.trim();
+            const password = document.getElementById('gateLoginPassword').value;
+
+            if (!email || !password) {
+                showGateStatus('Vui lòng nhập đầy đủ thông tin', true);
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+
+                const response = await fetch('/api/v1/auth/jwt/login', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Đăng nhập thất bại');
+                }
+
+                const data = await response.json();
+                localStorage.setItem('access_token', data.access_token);
+                showGateStatus('Đăng nhập thành công!');
+                setTimeout(showMainApp, 1000);
+            } catch (error) {
+                showGateStatus(error.message, true);
+            }
+        });
+
+        // Gate register form
+        document.getElementById('gateRegisterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('gateRegisterEmail').value.trim();
+            const password = document.getElementById('gateRegisterPassword').value;
+            const fullName = document.getElementById('gateRegisterName').value.trim();
+
+            if (!email || !password) {
+                showGateStatus('Vui lòng nhập email và mật khẩu', true);
+                return;
+            }
+
+            if (password.length < 8) {
+                showGateStatus('Mật khẩu phải có ít nhất 8 ký tự', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        full_name: fullName || null,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Đăng ký thất bại');
+                }
+
+                showGateStatus('Đăng ký thành công! Vui lòng kiểm tra email để nhận mã OTP.');
+                document.getElementById('gateOtpEmail').value = email;
+                
+                // Show OTP form
+                gateForms.forEach(form => form.classList.remove('active'));
+                document.getElementById('gateOtpForm').style.display = 'flex';
+            } catch (error) {
+                showGateStatus(error.message, true);
+            }
+        });
+
+        // Gate OTP form
+        document.getElementById('gateOtpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('gateOtpEmail').value.trim();
+            const otpCode = document.getElementById('gateOtpCode').value.trim();
+
+            if (!email || !otpCode) {
+                showGateStatus('Vui lòng nhập email và mã OTP', true);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/auth/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp_code: otpCode }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Xác minh OTP thất bại');
+                }
+
+                showGateStatus('Xác minh thành công! Bạn có thể đăng nhập ngay.');
+                
+                // Switch back to login form
+                setTimeout(() => {
+                    gateTabs.forEach(t => t.classList.remove('active'));
+                    gateTabs[0].classList.add('active'); // Login tab
+                    gateForms.forEach(form => form.classList.remove('active'));
+                    document.getElementById('gateLoginForm').classList.add('active');
+                    document.getElementById('gateOtpForm').style.display = 'none';
+                    document.getElementById('gateLoginEmail').value = email;
+                    hideGateStatus();
+                }, 2000);
+            } catch (error) {
+                showGateStatus(error.message, true);
+            }
+        });
+
+        // Logout functionality
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('access_token');
+                showAuthGate();
+                logoutBtn.style.display = 'none';
+            });
+        }
+
+        // Initialize auth check
+        checkAuthStatus();
     </script>
 </body>
 </html>
