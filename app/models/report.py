@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import func
@@ -19,19 +20,19 @@ class Report(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    reported_url: Mapped[str | None]
+    reported_url: Mapped[Optional[str]]
 
-    reported_email: Mapped[str | None]
+    reported_email: Mapped[Optional[str]]
 
-    reported_phone: Mapped[str | None]
+    reported_phone: Mapped[Optional[str]]
 
     phones = relationship(
-        "ReportedPhone", back_populates="report", cascade="all, delete-orphan")
+        "BlackListPhone", back_populates="report", cascade="all, delete-orphan")
+    urls = relationship(
+        "BlackListURL", back_populates="report", cascade="all, delete-orphan")
 
-    description: Mapped[str | None]
+    description: Mapped[Optional[str]]
 
-    source: Mapped[str | None]
+    source: Mapped[Optional[str]]
 
-    status: Mapped[bool | None]
-
-    severity: Mapped[str | None]
+    status: Mapped[Optional[bool]]

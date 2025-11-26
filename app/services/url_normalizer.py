@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, Optional
 from urllib.parse import parse_qsl, urlencode, urlsplit, unquote
 
 from app.core.config import settings
@@ -13,9 +13,9 @@ class URLNormalizer:
 
     def __init__(
         self,
-        tracking_params: Iterable[str] | None = None,
-        keep_params: Iterable[str] | None = None,
-        tracking_prefixes: Iterable[str] | None = None,
+        tracking_params: Optional[Iterable[str]] = None,
+        keep_params: Optional[Iterable[str]] = None,
+        tracking_prefixes: Optional[Iterable[str]] = None,
     ):
         self.tracking_params = {p.lower() for p in (tracking_params or settings.WHITELIST_TRACKING_PARAMS)}
         self.keep_params = {p.lower() for p in (keep_params or settings.WHITELIST_KEEP_PARAMS)}

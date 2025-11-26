@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, HTTPException, Query, status
 from sqlalchemy import func, select
 from starlette.responses import Response
@@ -5,29 +6,47 @@ from starlette.responses import Response
 from app.deps.db import CurrentAsyncSession
 from app.deps.request_params import ReportedPhonesRequestParams
 from app.deps.users import CurrentUser
-from app.models.reported_phone import ReportedPhone
-from app.schemas.reported_phone import ReportedPhone as ReportedPhoneSchema
-from app.schemas.reported_phone import ReportedPhoneCreate, ReportedPhoneUpdate
+from app.models.blacklist_phone import BlackListPhone
+from app.schemas.blacklist import BlackListPhoneOut, BlackListPhoneCreate
 from app.services.phone import normalize_phone
 
 router = APIRouter(prefix="/reported_phones")
 
 
-@router.get("/search", response_model=bool)
+@router.get("/search")
 async def search_reported_phone(
+    session: CurrentAsyncSession,
     value: str = Query(...),
-    session: CurrentAsyncSession = None,
-    user: CurrentUser = None,
 ):
+    """Tìm kiếm số điện thoại trong blacklist - không yêu cầu đăng nhập
+    
+    Returns:
+    - {"status": "danger", "message": "Số điện thoại này đã bị báo cáo là lừa đảo"} nếu có trong blacklist
+    - {"status": "warning", "message": "Số điện thoại này chưa có trong hệ thống, hãy cẩn thận"} nếu không có
+    """
     normalized_value = normalize_phone(value)
-    result = await session.execute(select(ReportedPhone.value))
-    all_values = [normalize_phone(v) for v in result.scalars().all() if v]
+    
+    # Kiểm tra trong blacklist
+    result = await session.execute(
+        select(BlackListPhone).where(BlackListPhone.value == normalized_value)
+    )
+    blacklist_entry = result.scalar_one_or_none()
+    
+    if blacklist_entry:
+        return {
+            "status": "danger",
+            "message": "⚠️ Số điện thoại này đã bị báo cáo là lừa đảo",
+            "found": True
+        }
+    else:
+        return {
+            "status": "warning",
+            "message": "⚠️ Số điện thoại này chưa có trong hệ thống, hãy cẩn thận",
+            "found": False
+        }
 
-    exists = normalized_value in all_values
-    return exists
 
-
-@router.get("", response_model=list[ReportedPhoneSchema])
+@router.get("", response_model=list[BlackListPhoneOut])
 async def get_reported_phones(
     response: Response,
     session: CurrentAsyncSession,
@@ -35,12 +54,12 @@ async def get_reported_phones(
     user: CurrentUser,
 ):
     total = await session.scalar(
-        select(func.count(ReportedPhone.id))
+        select(func.count(BlackListPhone.id))
     )
     reported_phones = (
         (
             await session.execute(
-                select(ReportedPhone)
+                select(BlackListPhone)
                 .offset(request_params.skip)
                 .limit(request_params.limit)
                 .order_by(request_params.order_by)
@@ -55,28 +74,23 @@ async def get_reported_phones(
     return reported_phones
 
 
-@router.post("", response_model=ReportedPhoneSchema, status_code=201)
+@router.post("", response_model=BlackListPhoneOut, status_code=201)
 async def create_reported_phone(
-    reported_phone_in: ReportedPhoneCreate,
+    reported_phone_in: BlackListPhoneCreate,
     session: CurrentAsyncSession,
-    user: CurrentUser,
 ):
-    if user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to perform this action."
-        )
-        
-    reported_phone = ReportedPhone(**reported_phone_in.model_dump())
+    """Báo cáo số điện thoại đáng ngờ - không yêu cầu đăng nhập"""
+    reported_phone = BlackListPhone(**reported_phone_in.model_dump())
     session.add(reported_phone)
     await session.commit()
+    await session.refresh(reported_phone)
     return reported_phone
 
 
-@router.put("/{reported_phone_id}", response_model=ReportedPhoneSchema)
+@router.put("/{reported_phone_id}", response_model=BlackListPhoneOut)
 async def update_reported_phone(
     reported_phone_id: int,
-    reported_phone_in: ReportedPhoneUpdate,
+    reported_phone_in: BlackListPhoneCreate,
     session: CurrentAsyncSession,
     user: CurrentUser,
 ):
@@ -86,7 +100,7 @@ async def update_reported_phone(
             detail="You do not have permission to perform this action."
         )
         
-    reported_phone: ReportedPhone | None = await session.get(ReportedPhone, reported_phone_id)
+    reported_phone: Optional[BlackListPhone] = await session.get(BlackListPhone, reported_phone_id)
     if not reported_phone:
         raise HTTPException(404)
     update_data = reported_phone_in.model_dump(exclude_unset=True)
@@ -97,13 +111,13 @@ async def update_reported_phone(
     return reported_phone
 
 
-@router.get("/{reported_phone_id}", response_model=ReportedPhoneSchema)
+@router.get("/{reported_phone_id}", response_model=BlackListPhoneOut)
 async def get_reported_phone(
     reported_phone_id: int,
     session: CurrentAsyncSession,
     user: CurrentUser,
 ):
-    reported_phone: ReportedPhone | None = await session.get(ReportedPhone, reported_phone_id)
+    reported_phone: Optional[BlackListPhone] = await session.get(BlackListPhone, reported_phone_id)
     if not reported_phone:
         raise HTTPException(404)
     return reported_phone
@@ -121,7 +135,7 @@ async def delete_reported_phone(
             detail="You do not have permission to perform this action."
         )
         
-    reported_phone: ReportedPhone | None = await session.get(ReportedPhone, reported_phone_id)
+    reported_phone: Optional[BlackListPhone] = await session.get(BlackListPhone, reported_phone_id)
     if not reported_phone:
         raise HTTPException(404)
     await session.delete(reported_phone)

@@ -1,12 +1,12 @@
 import json
 from collections.abc import Callable
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import Depends, HTTPException, Query
 from sqlalchemy import UnaryExpression, asc, desc
 
 from app.db import Base
-from app.models.reported_phone import ReportedPhone
+from app.models.blacklist_phone import BlackListPhone
 from app.schemas.request_params import RequestParams
 
 
@@ -14,13 +14,13 @@ def parse_react_admin_params(model: type[Base]) -> Callable:
     """Parses sort and range parameters coming from a react-admin request"""
 
     def inner(
-        sort_: str | None = Query(
+        sort_: Optional[str] = Query(
             None,
             alias="sort",
             description='Format: `["field_name", "direction"]`',
             example='["id", "ASC"]',
         ),
-        range_: str | None = Query(
+        range_: Optional[str] = Query(
             None,
             alias="range",
             description="Format: `[start, end]`",
@@ -50,4 +50,4 @@ def parse_react_admin_params(model: type[Base]) -> Callable:
 
 
 ReportedPhonesRequestParams = Annotated[RequestParams,
-                                        Depends(parse_react_admin_params(ReportedPhone))]
+                                        Depends(parse_react_admin_params(BlackListPhone))]

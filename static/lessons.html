@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài học - SafeNet Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #041b2f;
+            --bg-gradient-start: #052640;
+            --bg-gradient-end: #01212f;
+            --primary: #00c16a;
+            --secondary: #00b0ff;
+            --accent: #ff695a;
+            --text: #e4f1ff;
+            --text-muted: rgba(228, 241, 255, 0.72);
+            --card-bg: rgba(8, 27, 48, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.06);
+            --shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #07355c, #031525);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header p {
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .section-header h2 {
+            margin: 12px 0 0;
+            font-size: 36px;
+        }
+
+        .lesson-shell {
+            background: rgba(8, 27, 48, 0.9);
+            border-radius: var(--radius-lg);
+            padding: clamp(24px, 4vw, 48px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            text-align: left;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .category-tab {
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .category-tab span {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.4px;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(120deg, var(--primary), #26ffbf);
+            color: #001d11;
+            border-color: transparent;
+        }
+
+        .lesson-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            justify-items: center;
+        }
+
+        .lesson-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease, border 0.2s ease;
+            width: 100%;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .lesson-card.active {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .lesson-status {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+        }
+
+        .lesson-card h4 {
+            margin: 8px 0 0;
+        }
+
+        .lesson-detail {
+            margin-top: 32px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: clamp(18px, 3vw, 36px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .lesson-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .lesson-header h3 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .lesson-tag {
+            padding: 10px 20px;
+            border-radius: 999px;
+            background: rgba(0, 193, 106, 0.15);
+            border: 1px solid rgba(0, 193, 106, 0.4);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .lesson-summary {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(4, 20, 38, 0.7);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .coming-soon h3 {
+            margin-top: 0;
+        }
+
+        .lesson-media {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .video-panel {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: radial-gradient(circle, rgba(0, 177, 255, 0.18), rgba(0, 9, 20, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 0;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-panel iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: rgba(1, 9, 18, 0.7);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .video-overlay button {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            border: 0;
+            font-size: 30px;
+            background: white;
+            color: #062021;
+            cursor: pointer;
+        }
+
+        .knowledge-panel {
+            background: rgba(4, 20, 38, 0.85);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .risk-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .risk-tab {
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .risk-tab.active {
+            background: var(--secondary);
+            color: #00142a;
+            border-color: transparent;
+        }
+
+        .risk-card-wrapper {
+            perspective: 1000px;
+            width: 100%;
+        }
+
+        .risk-card {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .risk-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .risk-card-front,
+        .risk-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 32px;
+            background: radial-gradient(circle at top left, rgba(0, 176, 255, 0.15), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .risk-card-back {
+            transform: rotateY(180deg);
+        }
+
+        .risk-card-wrapper:hover .risk-card:not(.flipped) {
+            transform: translateY(-4px);
+        }
+
+        .risk-card-wrapper:hover .risk-card.flipped {
+            transform: rotateY(180deg) translateY(-4px);
+        }
+
+        .risk-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .risk-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .risk-title {
+            margin: 0 0 16px;
+            font-size: 24px;
+        }
+
+        .risk-content {
+            margin: 0;
+            line-height: 1.7;
+            color: var(--text-muted);
+        }
+
+        .quiz-card {
+            background: rgba(3, 12, 24, 0.85);
+            border-radius: 24px;
+            padding: clamp(20px, 3vw, 36px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .question-steps {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .question-step.active {
+            background: var(--primary);
+            color: #042818;
+            border-color: transparent;
+        }
+
+        .quiz-card h3 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .quiz-option {
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 18px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 16px;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .quiz-option.correct {
+            border-color: #0ed290;
+            background: rgba(14, 210, 144, 0.12);
+        }
+
+        .quiz-option.incorrect {
+            border-color: #ff7070;
+            background: rgba(255, 112, 112, 0.12);
+        }
+
+        .quiz-option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .answer-status {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .answer-status.correct {
+            background: rgba(14, 210, 144, 0.15);
+            border-color: #0ed290;
+            color: #0ed290;
+        }
+
+        .answer-status.incorrect {
+            background: rgba(255, 112, 112, 0.15);
+            border-color: #ff7070;
+            color: #ff7070;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 SafeNet Academy</h1>
+            <a href="/index.html" class="back-btn">← Quay lại trang chủ</a>
+        </div>
+
+        <div class="section-header">
+            <p style="text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin: 0;">SafeNet Academy</p>
+            <h2>Chọn chuyên mục để học</h2>
+            <div class="category-tabs" id="categoryTabs"></div>
+        </div>
+
+        <div class="lesson-shell">
+            <div class="lesson-list" id="lessonList"></div>
+            <div class="lesson-detail" id="lessonDetail"></div>
+        </div>
+    </div>
+
+    <script>
+        const lessonData = [
+            {
+                id: 'module-1',
+                title: 'Chuyên mục 1',
+                subtitle: 'Nhận diện rủi ro mạng xã hội',
+                lessons: [
+                    { id: 'cm1-b1', title: 'Bài 1 · Những rủi ro phổ biến', status: 'available' },
+                    { id: 'cm1-b2', title: 'Bài 2 · Sẽ sớm cập nhật', status: 'upcoming' },
+                    { id: 'cm1-b3', title: 'Bài 3 · Sẽ sớm cập nhật', status: 'upcoming' },
+                ],
+            },
+            {
+                id: 'module-2',
+                title: 'Chuyên mục 2',
+                subtitle: 'Bảo vệ tài khoản ngân hàng',
+                lessons: [
+                    { id: 'cm2-b1', title: 'Bài 1 · Đang phát triển', status: 'upcoming' },
+                    { id: 'cm2-b2', title: 'Bài 2 · Đang phát triển', status: 'upcoming' },
+                ],
+            },
+            {
+                id: 'module-3',
+                title: 'Chuyên mục 3',
+                subtitle: 'Kỹ năng báo cáo & tố giác',
+                lessons: [
+                    { id: 'cm3-b1', title: 'Bài 1 · Lên kế hoạch', status: 'upcoming' },
+                ],
+            },
+        ];
+
+        const categoryTabs = document.getElementById('categoryTabs');
+        const lessonList = document.getElementById('lessonList');
+        const lessonDetail = document.getElementById('lessonDetail');
+        let currentCategory = lessonData[0].id;
+        let currentLesson = 'cm1-b1';
+
+        const renderCategories = () => {
+            categoryTabs.innerHTML = '';
+            lessonData.forEach((category) => {
+                const button = document.createElement('button');
+                button.className = `category-tab ${currentCategory === category.id ? 'active' : ''}`;
+                button.innerHTML = `
+                    <strong>${category.title}</strong>
+                    <span>${category.subtitle || ''}</span>
+                `;
+                button.addEventListener('click', () => {
+                    currentCategory = category.id;
+                    currentLesson = category.lessons[0].id;
+                    renderCategories();
+                    renderLessons();
+                    renderLessonDetail();
+                });
+                categoryTabs.appendChild(button);
+            });
+        };
+
+        const renderLessons = () => {
+            lessonList.innerHTML = '';
+            const category = lessonData.find((cat) => cat.id === currentCategory);
+            category.lessons.forEach((lesson) => {
+                const card = document.createElement('div');
+                card.className = `lesson-card ${currentLesson === lesson.id ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div class="lesson-status">${lesson.status === 'available' ? 'Sẵn sàng' : 'Đang phát triển'}</div>
+                    <h4>${lesson.title}</h4>
+                `;
+                card.addEventListener('click', () => {
+                    currentLesson = lesson.id;
+                    renderLessons();
+                    renderLessonDetail();
+                });
+                lessonList.appendChild(card);
+            });
+        };
+
+        const renderLessonDetail = () => {
+            const activeCategory = lessonData.find((cat) => cat.id === currentCategory);
+            const activeLesson = activeCategory.lessons.find((lesson) => lesson.id === currentLesson);
+
+            if (!activeLesson || activeLesson.status !== 'available') {
+                lessonDetail.innerHTML = `
+                    <div class="coming-soon">
+                        <h3>Nội dung đang được biên soạn</h3>
+                        <p>Bài học này sẽ sớm cập nhật. Hãy quay lại sau!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            lessonDetail.innerHTML = `
+                <div class="lesson-header">
+                    <div>
+                        <p style="text-transform: uppercase; letter-spacing: 0.35em; color: var(--text-muted); margin: 0;">${activeCategory.subtitle}</p>
+                        <h3>${activeLesson.title}</h3>
+                    </div>
+                    <div class="lesson-tag">Đang học</div>
+                </div>
+                <div class="lesson-media">
+                    <div class="video-panel" id="lessonVideo">
+                        <div class="video-overlay">
+                            <button id="lessonPlay">▶</button>
+                            <p>Bấm để xem video mở đầu (YouTube)</p>
+                        </div>
+                    </div>
+                    <div class="lesson-summary">
+                        <h4 style="margin-top:0;">Bạn sẽ học gì?</h4>
+                        <p>
+                            Nhận diện nhanh các chiêu trò lừa đảo lan truyền trên mạng xã hội, cách đọc dấu hiệu bất thường
+                            trong tin nhắn và cách phản hồi an toàn. Hãy lật từng thẻ kiến thức bên dưới để xem mô tả, ví dụ
+                            thực tế và hậu quả tiềm ẩn.
+                        </p>
+                    </div>
+                </div>
+                <div class="knowledge-panel">
+                    <div class="risk-tabs" id="riskTabs"></div>
+                    <div class="risk-card-wrapper">
+                        <div class="risk-card" id="riskCard">
+                            <div class="risk-card-front">
+                                <div class="risk-meta" id="riskMeta"></div>
+                                <div class="risk-icon" id="riskIcon">🛡️</div>
+                                <h3 class="risk-title" id="riskTitle"></h3>
+                                <p class="risk-content" id="riskContent"></p>
+                            </div>
+                            <div class="risk-card-back">
+                                <div class="risk-meta" id="riskMetaBack"></div>
+                                <div class="risk-icon" id="riskIconBack">🛡️</div>
+                                <h3 class="risk-title" id="riskTitleBack"></h3>
+                                <p class="risk-content" id="riskContentBack"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quiz-card">
+                    <div class="question-steps" id="questionSteps"></div>
+                    <h3 id="questionText"></h3>
+                    <div class="quiz-options" id="optionsContainer"></div>
+                    <div class="answer-status" id="answerStatus">Chọn đáp án bạn nghĩ là đúng.</div>
+                </div>
+            `;
+
+            setupLessonInteractive();
+        };
+
+        const setupLessonInteractive = () => {
+            const youtubeId = 'axLuBnzS8UQ';
+            const videoContainer = document.getElementById('lessonVideo');
+            const playButton = document.getElementById('lessonPlay');
+            const overlay = videoContainer.querySelector('.video-overlay');
+
+            const loadVideo = () => {
+                videoContainer.innerHTML = '';
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+                iframe.style.border = '0';
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+                iframe.allowFullscreen = true;
+                videoContainer.appendChild(iframe);
+            };
+            playButton.addEventListener('click', loadVideo);
+            overlay.addEventListener('click', loadVideo);
+
+            const risks = [
+                {
+                    title: 'Lộ thông tin cá nhân',
+                    description: 'Đăng ảnh CCCD, thẻ sinh viên, check-in tại nhà/trường, công khai số điện thoại.',
+                    consequence: 'Dễ bị kẻ gian thu thập để mạo danh, chiếm đoạt tài khoản, vay tín dụng, bị "doxxing".',
+                    icon: '🛂',
+                },
+                {
+                    title: 'Lừa đảo mạo danh',
+                    description: 'Tin nhắn "Tài khoản bị khóa, gửi mã OTP"; "Anh đang cần tiền gấp chuyển giúp".',
+                    consequence: 'Mất tài khoản, mất tiền, bị chiếm đoạt dịch vụ thanh toán.',
+                    icon: '🎭',
+                },
+                {
+                    title: 'Theo dõi & quấy rối',
+                    description: 'Check-in nơi học, giờ đi chơi; bị người lạ bám theo, nhắn tin làm phiền.',
+                    consequence: 'Mất an toàn cá nhân, bị rình rập hoặc tấn công ngoài đời thực.',
+                    icon: '👁️',
+                },
+                {
+                    title: 'Bắt nạt mạng',
+                    description: 'Bình luận body shaming, bóc phốt, tung tin sai về bạn.',
+                    consequence: 'Ảnh hưởng tinh thần, trầm cảm, sợ hãi khi lên mạng.',
+                    icon: '⚡',
+                },
+                {
+                    title: 'Tin giả & thao túng thông tin',
+                    description: 'Tin nội dung giật gân, đầu tư coin, "trúng thưởng", dễ bị dắt mũi.',
+                    consequence: 'Bị lừa tiền, lan truyền thông tin sai lệch, ảnh hưởng uy tín cá nhân.',
+                    icon: '📰',
+                },
+                {
+                    title: 'Gặp gỡ người lạ',
+                    description: 'Kết bạn qua ứng dụng hẹn hò, được rủ gặp tại nơi vắng vẻ.',
+                    consequence: 'Nguy cơ bị lợi dụng, lừa đảo, thậm chí tấn công.',
+                    icon: '📍',
+                },
+            ];
+
+            const riskTabs = document.getElementById('riskTabs');
+            const riskCard = document.getElementById('riskCard');
+            const riskMeta = document.getElementById('riskMeta');
+            const riskIcon = document.getElementById('riskIcon');
+            const riskTitle = document.getElementById('riskTitle');
+            const riskContent = document.getElementById('riskContent');
+            const riskMetaBack = document.getElementById('riskMetaBack');
+            const riskIconBack = document.getElementById('riskIconBack');
+            const riskTitleBack = document.getElementById('riskTitleBack');
+            const riskContentBack = document.getElementById('riskContentBack');
+
+            let currentRisk = 0;
+            let cardState = 0;
+            const metaLabels = [
+                'BƯỚC 1 · Nhấp để xem mô tả chi tiết',
+                'BƯỚC 2 · Mô tả & ví dụ thực tế',
+                'BƯỚC 3 · Hậu quả tiềm ẩn',
+            ];
+
+            const renderRiskTabs = () => {
+                riskTabs.innerHTML = '';
+                risks.forEach((risk, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `risk-tab ${index === currentRisk ? 'active' : ''}`;
+                    btn.textContent = `Rủi ro ${index + 1}`;
+                    btn.addEventListener('click', () => {
+                        currentRisk = index;
+                        cardState = 0;
+                        riskCard.classList.remove('flipped');
+                        renderRiskCard();
+                        renderRiskTabs();
+                    });
+                    riskTabs.appendChild(btn);
+                });
+            };
+
+            const renderRiskCard = () => {
+                const risk = risks[currentRisk];
+                
+                // Front side
+                riskMeta.textContent = metaLabels[cardState];
+                riskIcon.textContent = risk.icon;
+                riskTitle.textContent = risk.title;
+                if (cardState === 0) {
+                    riskContent.textContent = 'Chạm vào thẻ để xem mô tả và ví dụ thực tế cho rủi ro này.';
+                } else if (cardState === 1) {
+                    riskContent.textContent = risk.description;
+                } else {
+                    riskContent.textContent = risk.consequence;
+                }
+                
+                // Back side - hiển thị nội dung tiếp theo
+                const nextState = (cardState + 1) % 3;
+                riskMetaBack.textContent = metaLabels[nextState];
+                riskIconBack.textContent = risk.icon;
+                riskTitleBack.textContent = risk.title;
+                if (nextState === 0) {
+                    riskContentBack.textContent = 'Chạm vào thẻ để xem mô tả và ví dụ thực tế cho rủi ro này.';
+                } else if (nextState === 1) {
+                    riskContentBack.textContent = risk.description;
+                } else {
+                    riskContentBack.textContent = risk.consequence;
+                }
+            };
+
+            riskCard.addEventListener('click', () => {
+                // Thêm class flipped để trigger animation
+                riskCard.classList.add('flipped');
+                
+                // Sau khi animation hoàn thành một nửa, cập nhật state và reset
+                setTimeout(() => {
+                    cardState = (cardState + 1) % 3;
+                    renderRiskCard();
+                    riskCard.classList.remove('flipped');
+                }, 300); // Nửa thời gian animation (0.6s / 2)
+            });
+
+            renderRiskTabs();
+            renderRiskCard();
+
+            const quiz = [
+                {
+                    question:
+                        'Khi bạn đăng ảnh căn cước công dân hoặc chia sẻ thông tin cá nhân trên mạng xã hội, rủi ro lớn nhất là gì?',
+                    options: [
+                        'Tăng tương tác và được nhiều người biết đến hơn.',
+                        'Bị người khác đánh cắp thông tin, giả mạo danh tính.',
+                        'Không có rủi ro gì nếu để chế độ riêng tư.',
+                    ],
+                    answer: 1,
+                },
+                {
+                    question: 'Vì sao không nên check-in vị trí thật của mình?',
+                    options: [
+                        'Vì sẽ làm phiền bạn bè.',
+                        'Bị nghĩ là khoe mẽ.',
+                        'Kẻ xấu có thể theo dõi hoặc lợi dụng thông tin.',
+                    ],
+                    answer: 2,
+                },
+                {
+                    question: 'Một bình luận tiêu cực trên mạng có thể gây hậu quả nào?',
+                    options: [
+                        'Làm người khác vui hơn.',
+                        'Không có ảnh hưởng gì.',
+                        'Khiến người bị nhắm đến tổn thương tâm lý.',
+                    ],
+                    answer: 2,
+                },
+            ];
+
+            const questionSteps = document.getElementById('questionSteps');
+            const questionText = document.getElementById('questionText');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const answerStatus = document.getElementById('answerStatus');
+            let currentQuestion = 0;
+            const answered = Array(quiz.length).fill(false);
+
+            const renderSteps = () => {
+                questionSteps.innerHTML = '';
+                quiz.forEach((_, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `question-step ${idx === currentQuestion ? 'active' : ''}`;
+                    btn.textContent = idx + 1;
+                    btn.addEventListener('click', () => {
+                        currentQuestion = idx;
+                        renderQuestion();
+                        renderSteps();
+                    });
+                    questionSteps.appendChild(btn);
+                });
+            };
+
+            const renderQuestion = () => {
+                const data = quiz[currentQuestion];
+                questionText.textContent = `Câu ${currentQuestion + 1}: ${data.question}`;
+                optionsContainer.innerHTML = '';
+                answerStatus.textContent = answered[currentQuestion]
+                    ? 'Bạn đã trả lời câu này.'
+                    : 'Chọn đáp án mà bạn nghĩ chính xác.';
+                answerStatus.className = 'answer-status';
+
+                data.options.forEach((option, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-option';
+                    btn.innerHTML = `<span class="badge">${String.fromCharCode(65 + idx)}</span> ${option}`;
+                    btn.disabled = answered[currentQuestion];
+
+                    btn.addEventListener('click', () => {
+                        if (answered[currentQuestion]) return;
+                        answered[currentQuestion] = true;
+                        const isCorrect = idx === data.answer;
+                        btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+                        answerStatus.textContent = isCorrect
+                            ? 'Chính xác! Bạn đã nắm được kiến thức.'
+                            : 'Chưa chính xác. Đáp án đúng đã được tô sáng.';
+                        answerStatus.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+                        Array.from(optionsContainer.children).forEach((child, optionIndex) => {
+                            child.classList.add('disabled');
+                            child.disabled = true;
+                            if (optionIndex === data.answer) {
+                                child.classList.add('correct');
+                            }
+                            if (optionIndex !== data.answer && child !== btn) {
+                                child.classList.add('incorrect');
+                            }
+                        });
+                    });
+                    optionsContainer.appendChild(btn);
+                });
+            };
+
+            renderSteps();
+            renderQuestion();
+        };
+
+        renderCategories();
+        renderLessons();
+        renderLessonDetail();
+    </script>
+</body>
+</html>
+

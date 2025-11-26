@@ -92,14 +92,8 @@ services:
     volumes:
       - ./airflow-crawler/dags:/opt/airflow/dags
       - ./airflow-crawler/crawl_incremental_pg.py:/opt/airflow/crawl_incremental_pg.py
-    command: >
-      bash -lc "
-      pip install requests beautifulsoup4 psycopg2-binary &&
-      airflow db migrate &&
-      airflow users create -u admin -p admin -r Admin -e a@a -f a -l d || true &&
-      airflow scheduler &
-      airflow webserver
-      "
+      - ./airflow-entrypoint.sh:/entrypoint.sh
+    command: ["bash", "/entrypoint.sh"]
     ports:
       - "8083:8080"
     restart: unless-stopped

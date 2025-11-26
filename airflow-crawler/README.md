@@ -1,6 +1,6 @@
 # Airflow Crawler - Tinnhiemmang.vn Domain Crawler
 
-Crawler tự động cào domain từ tinnhiemmang.vn và ghi trực tiếp vào App DB (bảng `trusted_urls`).
+Crawler tự động cào domain từ tinnhiemmang.vn và ghi trực tiếp vào App DB (bảng `white_listURL`).
 
 ## 🚀 Khởi động
 
@@ -49,11 +49,11 @@ DAG sẽ tự động chạy mỗi ngày lúc **8:00 sáng** (theo schedule_inte
 
 ### Xem kết quả
 
-Kết nối DBeaver hoặc Adminer vào App DB để xem bảng `trusted_urls`:
+Kết nối DBeaver hoặc Adminer vào App DB để xem bảng `white_listURL`:
 
 ```sql
-SELECT COUNT(*) FROM trusted_urls WHERE source = 'airflow_crawler';
-SELECT * FROM trusted_urls WHERE source = 'airflow_crawler' ORDER BY created DESC LIMIT 10;
+SELECT COUNT(*) FROM "white_listURL" WHERE source = 'tinnhiemmang';
+SELECT * FROM "white_listURL" WHERE source = 'tinnhiemmang' ORDER BY id DESC LIMIT 10;
 ```
 
 ## ⚙️ Cấu hình
@@ -100,9 +100,9 @@ docker-compose exec airflow python /opt/airflow/crawl_incremental_pg.py
 
 - Crawler sẽ cào tối đa 2000 trang từ tinnhiemmang.vn
 - Dừng khi gặp 2 trang trống liên tiếp
-- Dữ liệu được ghi trực tiếp vào bảng `trusted_urls` trong App DB
-- Mỗi domain được normalize và lưu với `match_type = 'prefix'`
-- Source được đánh dấu là `'airflow_crawler'`
+- Dữ liệu được ghi trực tiếp vào bảng `white_listURL` trong App DB
+- Mỗi domain được lưu với thông tin: domain, company, first_seen, last_seen
+- Source được đánh dấu là `'tinnhiemmang'`
 
 ## 🛑 Dừng dịch vụ
 

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo - SafeNet Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #041b2f;
+            --bg-gradient-start: #052640;
+            --bg-gradient-end: #01212f;
+            --primary: #00c16a;
+            --secondary: #00b0ff;
+            --accent: #ff695a;
+            --text: #e4f1ff;
+            --text-muted: rgba(228, 241, 255, 0.72);
+            --card-bg: rgba(8, 27, 48, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.06);
+            --shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #07355c, #031525);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .panel-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: clamp(20px, 3vw, 36px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .tabs {
+            display: inline-flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            padding: 4px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            border: 0;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 12px 24px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: #042818;
+            font-weight: 600;
+        }
+
+        .report-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 16px 32px;
+            background: var(--primary);
+            color: #042818;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: #00d97a;
+            transform: translateY(-2px);
+        }
+
+        .lookup-result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 193, 106, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-md);
+            display: none;
+        }
+
+        .lookup-result.visible {
+            display: block;
+        }
+
+        .lookup-result h4 {
+            margin: 0 0 12px;
+            color: var(--primary);
+        }
+
+        .lookup-result p {
+            margin: 8px 0;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Báo cáo số điện thoại hoặc URL đáng ngờ</h1>
+            <a href="/index.html" class="back-btn">← Quay lại trang chủ</a>
+        </div>
+
+        <div class="panel-card">
+            <div class="tabs" id="reportTabs">
+                <button class="tab active" data-report-mode="phone">Báo cáo SĐT</button>
+                <button class="tab" data-report-mode="url">Báo cáo URL</button>
+            </div>
+            <div class="report-grid" id="reportForms"></div>
+        </div>
+    </div>
+
+    <script>
+        const reportForms = document.getElementById('reportForms');
+        const reportTabs = document.querySelectorAll('#reportTabs .tab');
+        let reportMode = 'phone';
+
+        const renderReportForm = () => {
+            if (reportMode === 'phone') {
+                reportForms.innerHTML = `
+                    <label>Số điện thoại nghi ngờ *</label>
+                    <input type="text" id="reportPhone" placeholder="Nhập số điện thoại" />
+                    <label>Mô tả ngắn</label>
+                    <textarea id="reportPhoneDesc" placeholder="Mô tả về số điện thoại này, lý do bạn nghi ngờ..."></textarea>
+                    <button class="submit-btn" id="reportPhoneSubmit">Gửi báo cáo SĐT</button>
+                    <div class="lookup-result" id="reportPhoneStatus"></div>
+                `;
+                document
+                    .getElementById('reportPhoneSubmit')
+                    .addEventListener('click', async () => {
+                        const phone = document.getElementById('reportPhone').value.trim();
+                        const description = document.getElementById('reportPhoneDesc').value.trim();
+                        const status = document.getElementById('reportPhoneStatus');
+                        status.classList.add('visible');
+                        if (!phone) {
+                            status.innerHTML = '<h4>Vui lòng nhập SĐT.</h4>';
+                            return;
+                        }
+                        try {
+                            const response = await fetch('/api/v1/reports', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    reported_phone: phone,
+                                    description: description || null,
+                                    source: 'user-report',
+                                }),
+                            });
+                            if (!response.ok) {
+                                const errorData = await response.json().catch(() => ({}));
+                                throw new Error(errorData.detail || 'Không thể gửi báo cáo. Vui lòng thử lại.');
+                            }
+                            status.innerHTML = '<h4>✅ Đã ghi nhận báo cáo SĐT.</h4><p>Cảm ơn bạn đã đóng góp! Báo cáo sẽ được xem xét.</p>';
+                            document.getElementById('reportPhone').value = '';
+                            document.getElementById('reportPhoneDesc').value = '';
+                        } catch (error) {
+                            status.innerHTML = `<h4>Lỗi</h4><p>${error.message}</p>`;
+                        }
+                    });
+            } else {
+                reportForms.innerHTML = `
+                    <label>Đường dẫn nghi ngờ *</label>
+                    <input type="text" id="reportUrl" placeholder="Nhập URL" />
+                    <label>Mô tả ngắn</label>
+                    <textarea id="reportUrlDesc" placeholder="Nội dung, lý do bạn nghi ngờ..."></textarea>
+                    <button class="submit-btn" id="reportUrlSubmit">Gửi báo cáo URL</button>
+                    <div class="lookup-result" id="reportUrlStatus"></div>
+                `;
+                document
+                    .getElementById('reportUrlSubmit')
+                    .addEventListener('click', async () => {
+                        const value = document.getElementById('reportUrl').value.trim();
+                        const description = document.getElementById('reportUrlDesc').value.trim();
+                        const status = document.getElementById('reportUrlStatus');
+                        status.classList.add('visible');
+                        if (!value) {
+                            status.innerHTML = '<h4>Vui lòng nhập URL.</h4>';
+                            return;
+                        }
+                        try {
+                            const response = await fetch('/api/v1/reports', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    reported_url: value,
+                                    description: description || null,
+                                    source: 'user-report',
+                                }),
+                            });
+                            if (!response.ok) {
+                                const errorData = await response.json().catch(() => ({}));
+                                throw new Error(errorData.detail || 'Không thể gửi báo cáo. Vui lòng thử lại.');
+                            }
+                            status.innerHTML =
+                                '<h4>✅ Đã ghi nhận báo cáo URL.</h4><p>Cảm ơn bạn đã đóng góp! Báo cáo sẽ được xem xét.</p>';
+                            document.getElementById('reportUrl').value = '';
+                            document.getElementById('reportUrlDesc').value = '';
+                        } catch (error) {
+                            status.innerHTML = `<h4>Lỗi</h4><p>${error.message}</p>`;
+                        }
+                    });
+            }
+        };
+
+        reportTabs.forEach((tab) =>
+            tab.addEventListener('click', () => {
+                reportMode = tab.dataset.reportMode;
+                reportTabs.forEach((t) => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderReportForm();
+            })
+        );
+
+        renderReportForm();
+    </script>
+</body>
+</html>
+

@@ -1,45 +1,34 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, ConfigDict
 
-from app.models.trusted_url import WhitelistMatchType
+
+class WhiteListURLBase(BaseModel):
+    domain: str = Field(..., description="Domain để thêm vào whitelist")
+    company: Optional[str] = Field(None, description="Tên công ty sở hữu domain")
+    source: Optional[str] = Field(None, description="Nguồn dữ liệu (vd: tinnhiemmang)")
 
 
-class TrustedURLBase(BaseModel):
-    value: str = Field(..., description="URL hoặc pattern gốc để normalize")
-    match_type: WhitelistMatchType = Field(
-        default=WhitelistMatchType.EXACT,
-        description="Chế độ so khớp: exact, prefix, wildcard",
-    )
-    source: Optional[str] = Field(None, description="Nguồn dữ liệu (vd: crawler)")
-    description: Optional[str] = Field(None, description="Ghi chú thêm")
-    is_active: bool = Field(default=True)
-
-
-class TrustedURLCreate(TrustedURLBase):
+class WhiteListURLCreate(WhiteListURLBase):
     pass
 
 
-class TrustedURLOut(BaseModel):
+class WhiteListURLOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    normalized_pattern: str
-    match_type: WhitelistMatchType
+    domain: str
+    company: Optional[str] = None
+    first_seen: date
+    last_seen: date
     source: Optional[str] = None
-    description: Optional[str] = None
-    raw_example: Optional[str] = None
-    is_active: bool
-    created: datetime
-    updated: datetime
 
 
-class TrustedURLUpdate(BaseModel):
-    description: Optional[str] = None
-    is_active: Optional[bool] = None
+class WhiteListURLUpdate(BaseModel):
+    company: Optional[str] = None
     source: Optional[str] = None
 
 
@@ -47,7 +36,7 @@ class URLWhitelistMatchResult(BaseModel):
     original_url: str
     normalized_url: str
     is_trusted: bool
-    match_type: Optional[WhitelistMatchType] = None
+    match_type: Optional[str] = None  # Giữ lại để tương thích, nhưng không dùng nữa
     whitelist_entry_id: Optional[int] = None
     matched_pattern: Optional[str] = None
     reason: Optional[str] = None

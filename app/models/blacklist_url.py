@@ -1,0 +1,36 @@
+from datetime import datetime
+from typing import Optional
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql.functions import func
+from sqlalchemy.sql.sqltypes import DateTime, String
+from sqlalchemy import ForeignKey
+
+from app.db import Base
+
+
+class BlackListURL(Base):
+    __tablename__ = "blacklist_url"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    created: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    domain: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    description: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    source: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
+    report_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("reports.id", ondelete="CASCADE"), nullable=True
+    )
+
+    report = relationship("Report", back_populates="urls")
+
+    def __repr__(self) -> str:
+        return f"BlackListURL(id={self.id}, domain={self.domain!r})"
+

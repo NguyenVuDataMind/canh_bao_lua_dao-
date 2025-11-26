@@ -88,22 +88,16 @@ def upsert_rows(rows):
     conn.autocommit = True
 
     with conn.cursor() as cur:
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS tinnhiemmang(
-            domain TEXT PRIMARY KEY,
-            company TEXT,
-            first_seen DATE NOT NULL,
-            last_seen DATE NOT NULL
-        );
-        """)
-
+        # Ghi vào bảng white_listurl (đã được tạo bởi migration)
+        # Sử dụng domain làm unique constraint, nếu domain đã tồn tại thì update
         sql = """
-        INSERT INTO tinnhiemmang(domain, company, first_seen, last_seen)
-        VALUES (%s, NULLIF(%s,''), %s, %s)
+        INSERT INTO white_listurl(domain, company, first_seen, last_seen, source)
+        VALUES (%s, NULLIF(%s,''), %s, %s, 'tinnhiemmang')
         ON CONFLICT (domain)
         DO UPDATE SET
-            company = COALESCE(EXCLUDED.company, tinnhiemmang.company),
-            last_seen = EXCLUDED.last_seen;
+            company = COALESCE(EXCLUDED.company, white_listurl.company),
+            last_seen = EXCLUDED.last_seen,
+            source = COALESCE(white_listurl.source, 'tinnhiemmang');
         """
 
         execute_batch(cur, sql, [(d, c, TODAY, TODAY) for d, c in rows], 500)

@@ -1,34 +1,33 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from fnmatch import fnmatch
-from typing import Iterable, List, Sequence
+from typing import List, Sequence, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.trusted_url import TrustedURL, WhitelistMatchType
+from app.models.white_list_url import WhiteListURL
 from app.schemas.whitelist import URLWhitelistMatchResult
 from app.services.url_normalizer import URLNormalizer
 
 
 @dataclass
 class _Match:
-    entry: TrustedURL | None
-    reason: str | None = None
+    entry: Optional[WhiteListURL]
+    reason: Optional[str] = None
 
 
 class WhitelistService:
     def __init__(
         self,
         session: AsyncSession,
-        normalizer: URLNormalizer | None = None,
+        normalizer: Optional[URLNormalizer] = None,
     ):
         self.session = session
         self.normalizer = normalizer or URLNormalizer()
 
     async def check_urls(self, urls: Sequence[str]) -> List[URLWhitelistMatchResult]:
-        entries = await self._get_active_entries()
+        entries = await self._get_whitelist_entries()
         results: List[URLWhitelistMatchResult] = []
 
         for url in urls:
@@ -50,76 +49,50 @@ class WhitelistService:
                     original_url=url,
                     normalized_url=normalized,
                     is_trusted=match.entry is not None,
-                    match_type=match.entry.match_type if match.entry else None,
+                    match_type=None,  # Không còn match_type nữa
                     whitelist_entry_id=match.entry.id if match.entry else None,
-                    matched_pattern=match.entry.normalized_pattern
-                    if match.entry
-                    else None,
+                    matched_pattern=match.entry.domain if match.entry else None,
                     reason=match.reason,
                 )
             )
         return results
 
-    def normalize_for_storage(
-        self, value: str, match_type: WhitelistMatchType
-    ) -> str:
-        """
-        Chuẩn hoá pattern trước khi lưu vào DB.
-        """
-        cleaned = value.strip()
-        if match_type == WhitelistMatchType.WILDCARD:
-            if "://" in cleaned or "/" in cleaned:
-                normalized = self.normalizer.normalize(cleaned)
-                cleaned = normalized.split("/", 1)[0] if normalized else ""
-            if not cleaned:
-                raise ValueError("Không thể normalize URL cho wildcard")
-            cleaned = cleaned.lower()
-            if cleaned.startswith("www."):
-                cleaned = cleaned[4:]
-            if not cleaned.startswith("*.") and "*" not in cleaned:
-                cleaned = f"*.{cleaned}"
-            return cleaned
-
-        normalized = self.normalizer.normalize(cleaned)
-        if not normalized:
-            raise ValueError("Không thể normalize URL được cung cấp")
-        if match_type == WhitelistMatchType.PREFIX:
-            if "?" in normalized:
-                return normalized
-            if not normalized.endswith("/"):
-                normalized = f"{normalized}/"
-        return normalized
-
-    async def _get_active_entries(self) -> Sequence[TrustedURL]:
-        stmt = select(TrustedURL).where(TrustedURL.is_active.is_(True))
+    async def _get_whitelist_entries(self) -> Sequence[WhiteListURL]:
+        """Lấy tất cả domain từ bảng white_listURL"""
+        stmt = select(WhiteListURL)
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
-    def _match(self, normalized: str, entries: Iterable[TrustedURL]) -> _Match:
+    def _match(self, normalized: str, entries: Sequence[WhiteListURL]) -> _Match:
+        """So sánh URL đã normalize với danh sách domain trong whitelist"""
         if not normalized:
             return _Match(entry=None, reason="Không thể normalize URL")
 
         host, path, query = self._split_normalized(normalized)
+        
+        # Normalize hostname để so sánh
+        normalized_host = host.lower().strip()
+        if normalized_host.startswith("www."):
+            normalized_host = normalized_host[4:]
+        
+        # So sánh với từng domain trong whitelist
         for entry in entries:
-            if entry.match_type == WhitelistMatchType.EXACT:
-                if normalized == entry.normalized_pattern:
-                    return _Match(entry=entry)
-            elif entry.match_type == WhitelistMatchType.PREFIX:
-                if normalized.startswith(entry.normalized_pattern):
-                    return _Match(entry=entry)
-            elif entry.match_type == WhitelistMatchType.WILDCARD:
-                patterns = [entry.normalized_pattern]
-                if "*" not in entry.normalized_pattern:
-                    patterns.append(f"*.{entry.normalized_pattern}")
-                else:
-                    base = entry.normalized_pattern.replace("*.", "", 1)
-                    patterns.append(base)
-                for pattern in patterns:
-                    if fnmatch(host, pattern):
-                        return _Match(entry=entry)
+            normalized_domain = entry.domain.lower().strip()
+            if normalized_domain.startswith("www."):
+                normalized_domain = normalized_domain[4:]
+            
+            # Exact match: domain khớp chính xác
+            if normalized_host == normalized_domain:
+                return _Match(entry=entry, reason="Khớp với domain trong whitelist")
+            
+            # Subdomain match: ví dụ sub.example.com khớp với example.com
+            if normalized_host.endswith(f".{normalized_domain}"):
+                return _Match(entry=entry, reason="Khớp với domain trong whitelist (subdomain)")
+        
         return _Match(entry=None, reason="Không khớp whitelist")
 
-    def _split_normalized(self, normalized: str) -> tuple[str, str, str | None]:
+    def _split_normalized(self, normalized: str) -> tuple[str, str, Optional[str]]:
+        """Tách URL đã normalize thành host, path, query"""
         host, sep, rest = normalized.partition("/")
         if not sep:
             return normalized, "/", None
@@ -135,4 +108,3 @@ class WhitelistService:
             return host, f"/{path_part}", query or None
 
         return host, f"/{rest}", None
-
