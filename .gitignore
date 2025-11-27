@@ -69,3 +69,24 @@ wandb/
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb_checkpoints
+
+# ============================================
+# Deploy & Sensitive Files (KHÔNG push lên GitHub)
+# ============================================
+# File hướng dẫn deploy chứa thông tin nhạy cảm
+DEPLOY_GCP.md
+DEPLOY_*.md
+deploy-notes.md
+
+# Credentials và secrets
+*.pem
+*.key
+*.crt
+credentials.json
+service-account*.json
+gcp-*.json
+
+# Backup files
+*.backup
+*.bak
+*.sql.gz

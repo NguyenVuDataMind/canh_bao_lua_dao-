@@ -10,7 +10,7 @@ class WhiteListURL(Base):
     __tablename__ = "white_listurl"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    domain: Mapped[str] = mapped_column(String, nullable=False)
+    domain: Mapped[str] = mapped_column(String, nullable=False, unique=True, index=True)
     company: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     first_seen: Mapped[date] = mapped_column(Date, nullable=False)
     last_seen: Mapped[date] = mapped_column(Date, nullable=False)
