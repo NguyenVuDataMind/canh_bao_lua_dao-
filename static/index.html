@@ -1778,12 +1778,12 @@
             if (text) formData.append('raw_text_input', text);
 
             aiResult.classList.add('visible');
-                aiResult.innerHTML = '<h4>⏳ Đang phân tích... (có thể mất 1-2 phút)</h4>';
+                aiResult.innerHTML = '<h4>⏳ Đang phân tích... (có thể mất 3-5 phút)</h4>';
 
             try {
-                // Tạo AbortController với timeout 120 giây (2 phút)
+                // Tạo AbortController với timeout 600 giây (10 phút)
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 120000);
+                const timeoutId = setTimeout(() => controller.abort(), 600000);
                 
                 const response = await fetch('/api/v1/image-processing/extract-text', {
                     method: 'POST',
