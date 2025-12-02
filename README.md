@@ -4,37 +4,29 @@ API phát hiện lừa đảo từ ảnh tin nhắn sử dụng OCR và AI.
 
 ## Quy Trình Làm Việc
 
-### 1. Kiến trúc hệ thống
+### 1. Kiến trúc Database
 
-![Kiến trúc hệ thống](Docs/image/diagram.png)
+![Kiến trúc Database](Docs/image/diagram.png)
 
-### 2. Luồng xử lý
+### 2. Luồng xử lý bằng AI 
 
 ```
 Người dùng upload ảnh tin nhắn hoặc nhập text
     ↓
 Tiền xử lý ảnh (OpenCV: crop, sharpen, enhance)
     ↓
-OCR tiếng Việt (Vintern-1B-v3.5) - Trích xuất text
+OCR tiếng Việt (Vintern-1B-v3.5) - Trích xuất text hoặc nhập text trực tiếp
     ↓
 Làm sạch text (giữ nguyên dấu tiếng Việt)
     ↓
-Kiểm tra URL với whitelist database
-    ↓
-Phân tích ngữ cảnh bằng Gemini AI
+Phân tích ngữ cảnh, đưa ra kết quả có lừa đảo hay không lừa đảo bằng Gemini AI
     ↓
 Trả kết quả: Cảnh báo và khuyến nghị chi tiết
 ```
 
 ## Các Tính Năng Chính
 
-### Trang chủ - Tra cứu và AI tư vấn
-
-![Trang chủ](Docs/image/trang%20chu.png)
-
-Giao diện tra cứu số điện thoại và URL lừa đảo
-
-### AI phân tích tin nhắn
+### Trang chủ - Tra cứu và AI tư vấn, giao diện tra cứu số điện thoại và URL lừa đảo
 
 ![AI Tư Vấn](Docs/image/trangchu_aituvan.png)
 
@@ -44,7 +36,7 @@ Upload ảnh hoặc nhập text để phân tích lừa đảo bằng AI
 
 ![Báo cáo](Docs/image/baocao.png)
 
-Người dùng gửi báo cáo và theo dõi trạng thái xử lý
+Người dùng gửi báo cáo đến admin để xử lý
 
 ### Bài học phòng chống lừa đảo
 
@@ -56,7 +48,7 @@ Kiến thức và tips nhận biết lừa đảo
 
 ![Admin](Docs/image/admin.png)
 
-Dashboard quản lý báo cáo và blacklist/whitelist
+Dashboard quản lý báo cáo và xử lý SOS
 
 ### Airflow Crawler
 
@@ -93,35 +85,7 @@ docker-compose ps
 - Web UI: http://34.142.202.55:5000/index.html
 - API Documentation: http://34.142.202.55:5000/docs/
 - Airflow: http://34.142.202.55:8083/home
-
-Credentials Airflow: `admin` / `admin`
-
-## Cấu Hình Database
-
-### PostgreSQL (Main App DB)
-- Host: `localhost`
-- Port: `5432`
-- Database: `fraud_alert`
-- User: `fraud_user`
-- Password: `fraud_password_123`
-
-### PostgreSQL (Airflow DB)
-- Host: `localhost`
-- Port: `5435`
-- Database: `airflow`
-- User: `airflow`
-- Password: `airflow`
-
-## Các API Endpoints Chính
-
 ```
-POST /api/image-processing/extract-text  - Phân tích ảnh/text lừa đảo
-GET  /api/reported-phones/search         - Tra cứu số điện thoại
-POST /api/whitelist/check                - Kiểm tra URL tin cậy
-POST /api/reports                        - Tạo báo cáo mới
-GET  /api/admin/pending-reports          - Danh sách báo cáo chờ duyệt
-```
-
 ## Tech Stack
 
 - Backend: FastAPI, SQLAlchemy, PostgreSQL
@@ -129,6 +93,6 @@ GET  /api/admin/pending-reports          - Danh sách báo cáo chờ duyệt
 - Infrastructure: Docker, Apache Airflow
 - Frontend: HTML/CSS/JavaScript
 
----
 
-Phát triển bởi Cap2 Team - Hệ Thống Chống Lừa Đảo
+
+
