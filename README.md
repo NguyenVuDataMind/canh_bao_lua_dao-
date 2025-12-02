@@ -1,6 +1,6 @@
 # Fraud Alert API - Hệ Thống Phát Hiện Lừa Đảo
 
-API phát hiện lừa đảo từ ảnh tin nhắn sử dụng OCR và AI.
+Web phát hiện lừa đảo từ ảnh tin nhắn sử dụng OCR và AI.
 
 ## Quy Trình Làm Việc
 
@@ -72,15 +72,6 @@ docker-compose ps
 ```
 
 ## Truy Cập Hệ Thống
-
-### Local Development
-
-- Web UI: http://localhost:5000/index.html
-- API Documentation: http://localhost:5000/docs/
-- Airflow: http://localhost:8083/home
-- Adminer: http://localhost:8082
-
-### Production Deployment
 
 - Web UI: http://34.142.202.55:5000/index.html
 - API Documentation: http://34.142.202.55:5000/docs/
